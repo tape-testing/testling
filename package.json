@@ -1,0 +1,48 @@
+{
+    "name" : "testling",
+    "description" : "Unit test your browser-side javascript. Integrates with browserling!.",
+    "version" : "0.0.1",
+    "repository" : {
+        "type" : "git",
+        "url" : "git://github.com/substack/node-wordwrap.git"
+    },
+    "main" : "./index.js",
+    "keywords" : [
+        "unit",
+        "test",
+        "testing",
+        "browser",
+        "cross-browser",
+        "ie",
+        "explorer",
+        "internet explorer",
+        "firefox",
+        "chrome",
+        "safari",
+        "opera"
+    ],
+    "directories" : {
+        "lib" : ".",
+        "example" : "example",
+        "test" : "test"
+    },
+    "scripts" : {
+        "test" : "expresso"
+    },
+    "dependencies" : {
+        "express" : ">=2.3.6 <2.4",
+        "jade" : "0.11.x"
+    },
+    "devDependencies" : {
+        "expresso" : "=0.7.x"
+    },
+    "engines" : {
+        "node" : ">=0.4.0"
+    },
+    "license" : "MIT/X11",
+    "author" : {
+        "name" : "James Halliday",
+        "email" : "mail@substack.net",
+        "url" : "http://substack.net"
+    }
+}
