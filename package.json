@@ -30,8 +30,11 @@
         "test" : "expresso"
     },
     "dependencies" : {
-        "express" : ">=2.3.6 <2.4",
-        "jade" : "0.11.x"
+        "express" : "=2.3.6",
+        "jade" : "=0.11.0",
+        "browserify" : "=0.4.4",
+        "dnode" : "=0.6.11",
+        "jquery-browserify" : "=1.6.0"
     },
     "devDependencies" : {
         "expresso" : "=0.7.x"

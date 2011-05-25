@@ -1,13 +1,4 @@
-var fs = require('fs');
+#!/usr/bin/env node
 
-var express = require('express');
-var app = express.createServer();
+var app = require('./').createServer();
 app.listen(8080);
-
-app.helpers({
-    version : JSON.parse(fs.readFileSync(__dirname + '/package.json')).version,
-});
-
-app.get('/', function (req, res) {
-    res.render('index.jade');
-});
