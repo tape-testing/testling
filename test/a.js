@@ -1,5 +1,4 @@
 var assert = require('assert');
-var jQuery = require('jquery-browserify');
 
 exports.cmp = function (t) {
     var window = t.openWindow();

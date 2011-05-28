@@ -1,7 +1,6 @@
 var $ = require('jquery-browserify');
 var dnode = require('dnode');
 
-var windowNum = 0;
 function runTest (test) {
     var t = {
         openWindow : function () {
@@ -10,7 +9,7 @@ function runTest (test) {
                 .attr('src', '/')
                 .appendTo($('#tests'))
             ;
-            var win = window[windowNum++];
+            var win = window[window.length - 1];
             t.windows.push(win);
             return win;
         },
