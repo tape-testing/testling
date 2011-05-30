@@ -32,6 +32,7 @@
     "dependencies" : {
         "express" : "=2.3.6",
         "jade" : "=0.11.0",
+        "jadeify" : ">=0.1.0 <0.2",
         "browserify" : ">=0.4.13 <0.5",
         "dnode" : "=0.6.11",
         "jquery-browserify" : "=1.6.0"

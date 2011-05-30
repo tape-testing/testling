@@ -1,10 +1,7 @@
-var assert = require('assert');
-
 exports.cmp = function (t) {
-    var window = t.openWindow();
-    var $ = require('jquery')(window);
-    
-    t.navigate('about:blank', function () {
+    t.createWindow('about:blank', function (window) {
+        var $ = require('jquery')(window);
+        
         $('<div>')
             .attr('id', 'doom')
             .text('rawr')
@@ -12,7 +9,8 @@ exports.cmp = function (t) {
         ;
         console.log($('#doom').text());
         
-        assert.equal(4, 4);
-        assert.equal(2, 3);
+        t.equal(4, 4);
+        t.equal(2, 3);
+        t.end();
     });
 };

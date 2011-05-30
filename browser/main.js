@@ -1,40 +1,27 @@
 var $ = require('jquery-browserify');
 var dnode = require('dnode');
+var jadeify = require('jadeify');
+var Test = require('./test');
 
-function runTest (test) {
-    var t = {
-        openWindow : function () {
-            $('<iframe>')
-                .addClass('viewport')
-                .attr('src', '/')
-                .appendTo($('#tests'))
-            ;
-            var win = window[window.length - 1];
-            t.windows.push(win);
-            return win;
-        },
-        windows : [],
-        navigate : function (win, url, cb) {
-            if (typeof win !== 'object') {
-                cb = url;
-                url = win;
-                win = t.windows.length === 0
-                    ? t.openWindow()
-                    : t.windows.slice(-1)[0]
-                ;
-            }
-            
-            win.location.href = url;
-            if (cb) {
-                setTimeout(function () {
-                    $(win).ready(cb);
-                }, 0);
-            }
-        },
-        end : function () {
-        },
-    };
-    return test(t);
+function runTest (name, test) {
+    var box = jadeify('test.jade', {
+        name : name,
+        ok : 0,
+        fail : 0,
+    }).appendTo($('#tests'));
+    
+    var t = new Test(name);
+    var counts = { ok : 0, failed : 0 };
+    
+    t.on('ok', function () {
+        box.vars.ok ++;
+    });
+    
+    t.on('fail', function () {
+        box.vars.fail ++;
+    });
+    
+    test(t);
 }
 
 $(window).ready(function () {
@@ -46,7 +33,7 @@ $(window).ready(function () {
             var test = require(key);
             
             Object.keys(test).forEach(function (name) {
-                runTest(test[name]);
+                runTest(name, test[name]);
             });
         })
     ;

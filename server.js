@@ -22,7 +22,7 @@ app.listen(argv.port);
 var bundle = browserify({
     entry : __dirname + '/browser/main.js',
     base : {
-        assert : __dirname + '/browser/assert.js',
+        './test' : __dirname + '/browser/test.js',
         '_tests/node_modules/jquery' : __dirname + '/browser/jquery.js',
         _tests : path.resolve(process.cwd(), testDir),
     },
