@@ -1,4 +1,4 @@
-exports.cmp = function (t) {
+exports.rawr = function (t) {
     t.createWindow('about:blank', function (window) {
         var $ = require('jquery')(window);
         
@@ -7,7 +7,6 @@ exports.cmp = function (t) {
             .text('rawr')
             .appendTo(window.document.body)
         ;
-        console.log($('#doom').text());
         
         t.equal(4, 4);
         t.equal(2, 3);
