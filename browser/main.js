@@ -3,12 +3,12 @@ var dnode = require('dnode');
 var jadeify = require('jadeify');
 var Test = require('./test');
 
+var total = null;
+
 function createTestElement (name) {
     var box = jadeify('test.jade', {
         name : name,
-        progress : jadeify('progress.jade', {
-            percent : 0
-        })[0].outerHTML,
+        progress : jadeify('progress.jade')[0].outerHTML,
         ok : 0,
         fail : 0,
     }).appendTo($('#tests'));
@@ -20,9 +20,27 @@ function createTestElement (name) {
     progress.find('.finished img').width(pWidth).height(pHeight);
     progress.find('.remaining img').width(pWidth).height(pHeight);
     
-    box.percent = function (p) {
+    box.complete = function (p) {
+        if (box !== total) {
+            var ran = 0, planned = 0;
+            total.tests.forEach(function (t) {
+                ran += t.count;
+                if (!t.running) {
+                    planned += t.count;
+                }
+                else if (t.planned) {
+                    planned += t.planned;
+                }
+                else {
+                    planned = undefined;
+                }
+            });
+            
+            if (planned) total.complete(ran / planned);
+        }
+        
         progress.find('.finished').width(
-            Math.min(pWidth, Math.floor((p / 100) * pWidth))
+            Math.min(pWidth, Math.floor(p * pWidth))
         );
     };
     
@@ -49,7 +67,9 @@ function createTestElement (name) {
 }
 
 $(window).ready(function () {
-    var total = createTestElement('total');
+    total = createTestElement('total');
+    total.tests = [];
+    
     var running = {};
     
     Object.keys(require.modules)
@@ -69,6 +89,8 @@ $(window).ready(function () {
                 var box = createTestElement(file + ' : ' + name);
                 
                 var t = new Test(name, box.find('div .frames'));
+                total.tests.push(t);
+                
                 var arrow = box.find('div.title img.arrow');
                 var tArrow = total.find('div.title img.arrow');
                 
@@ -149,7 +171,7 @@ $(window).ready(function () {
                     box.find('.more .asserts').append(ok);
                     total.find('.more .asserts').append(ok.clone());
                     
-                    if (t.planned) box.percent(t.count / t.planned * 100);
+                    if (t.planned) box.complete(t.count / t.planned);
                 });
                 
                 t.on('fail', function (cmp, first, second, desc) {
@@ -176,18 +198,18 @@ $(window).ready(function () {
                     box.find('.more .asserts').append(fail);
                     total.find('.more .asserts').append(fail.clone());
                     
-                    if (t.planned) box.percent(t.count / t.planned * 100);
+                    if (t.planned) box.complete(t.count / t.planned);
                 });
                 
                 t.on('end', function () {
                     running[key].splice(running[key].indexOf(name), 1);
-                    box.percent(100);
+                    box.complete(1);
                     
                     if (running[key].length === 0) {
                         delete running[key];
                         
                         if (Object.keys(running).length === 0) {
-                            total.percent(100);
+                            total.complete(1);
                         }
                     }
                 });
