@@ -19,6 +19,7 @@ function createTestElement (name) {
     
     progress.find('.finished img').width(pWidth).height(pHeight);
     progress.find('.remaining img').width(pWidth).height(pHeight);
+    progress.find('.percent').width(pWidth);
     
     box.complete = function (p) {
         if (box !== total) {
@@ -41,6 +42,9 @@ function createTestElement (name) {
         
         progress.find('.finished').width(
             Math.min(pWidth, Math.floor(p * pWidth))
+        );
+        progress.find('.percent').text(
+            Math.min(100, Math.floor(p * 100)) + ' %'
         );
     };
     

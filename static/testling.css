@@ -59,6 +59,15 @@ body {
     position: absolute;
     overflow-x: hidden;
     width: 0px;
+    z-index: 1;
+}
+
+.test .title .progress .percent {
+    position: absolute;
+    font-weight: bold;
+    z-index: 10;
+    text-align: center;
+    margin-top: 10px;
 }
 
 .test .title .progress div img {
