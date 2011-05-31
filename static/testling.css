@@ -22,19 +22,19 @@ body {
     cursor: pointer;
 }
 
-.test .ok {
+.test .title.ok {
     background-color: rgb(230,250,240);
 }
 
-.test .ok:hover {
+.test .title.ok:hover {
     background-color: rgb(150,230,180);
 }
 
-.test .failed {
+.test .title.fail {
     background-color: rgb(250,120,100);
 }
 
-.test .failed:hover {
+.test .title.fail:hover {
     background-color: rgb(255,100,80);
 }
 
@@ -63,10 +63,14 @@ body {
     padding: 5px;
 }
 
+.asserts .assert img {
+    margin-right: 12px;
+}
+
 .asserts .ok {
-    background-color: rgb(120,255,150);
+    background-color: rgb(220,255,240);
 }
 
 .asserts .fail {
-    background-color: rgb(255,80,60);
+    background-color: rgb(255,200,180);
 }

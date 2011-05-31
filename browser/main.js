@@ -62,15 +62,16 @@ $(window).ready(function () {
                         cmp : cmp,
                         first : JSON.stringify(first),
                         second : JSON.stringify(second),
-                        desc : desc
-                    }).addClass('ok');
+                        desc : desc,
+                        class : 'ok'
+                    });
                     
                     box.find('.asserts').append(ok);
                     total.find('.asserts').append(ok.clone());
                 });
                 
                 t.on('fail', function (cmp, first, second, desc) {
-                    box.find('.title').removeClass('ok').addClass('failed');
+                    box.find('.title').removeClass('ok').addClass('fail');
                     box.vars.fail ++;
                     
                     [ arrow, tArrow ].forEach(function (elem) {
@@ -79,15 +80,16 @@ $(window).ready(function () {
                         if (m) elem.attr('src', m[1] + '_fail.png');
                     });
                     
-                    total.find('.title').removeClass('ok').addClass('failed');
+                    total.find('.title').removeClass('ok').addClass('fail');
                     total.vars.fail ++;
                     
                     var fail = jadeify('assert.jade', {
                         cmp : cmp,
                         first : JSON.stringify(first),
                         second : JSON.stringify(second),
-                        desc : desc
-                    }).addClass('fail');
+                        desc : desc,
+                        class : 'fail'
+                    });
                     
                     box.find('.asserts').append(fail);
                     total.find('.asserts').append(fail.clone());
