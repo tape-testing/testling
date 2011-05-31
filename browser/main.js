@@ -3,12 +3,38 @@ var dnode = require('dnode');
 var jadeify = require('jadeify');
 var Test = require('./test');
 
-$(window).ready(function () {
-    var total = jadeify('test.jade', {
+function createTestElement (name) {
+    var box = jadeify('test.jade', {
         name : 'total',
         ok : 0,
         fail : 0,
     }).appendTo($('#tests'));
+    box.find('.title').addClass('ok');
+    
+    function toggleImage () {
+        var im = box.find('.title img');
+        im.attr('src', im.attr('src').replace(
+            /\/(up|down)/,
+            function (_, x) {
+                return '/' + { up : 'down', down : 'up' }[x]
+            }
+        ));
+    }
+    
+    box.toggle(
+        function () {
+            $(this).find('.asserts').slideDown(200, toggleImage);
+        },
+        function () {
+            $(this).find('.asserts').slideUp(200, toggleImage);
+        }
+    );
+    
+    return box;
+}
+
+$(window).ready(function () {
+    var total = createTestElement('total');
     
     Object.keys(require.modules)
         .filter(function (key) {
@@ -22,23 +48,29 @@ $(window).ready(function () {
             ;
             
             Object.keys(test).forEach(function (name) {
-                var box = jadeify('test.jade', {
-                    name : file + ' : ' + name,
-                    ok : 0,
-                    fail : 0,
-                }).appendTo($('#tests'));
+                var box = createTestElement(file + ' : ' + name);
                 
                 var t = new Test(name, box.find('.frames'));
                 var arrow = box.find('div.title img');
                 var tArrow = total.find('div.title img');
                 
-                t.on('ok', function () {
+                t.on('ok', function (cmp, first, second, desc) {
                     box.vars.ok ++;
                     total.vars.ok ++;
+                    
+                    var ok = jadeify('assert.jade', {
+                        cmp : cmp,
+                        first : JSON.stringify(first),
+                        second : JSON.stringify(second),
+                        desc : desc
+                    }).addClass('ok');
+                    
+                    box.find('.asserts').append(ok);
+                    total.find('.asserts').append(ok.clone());
                 });
                 
-                t.on('fail', function () {
-                    box.addClass('failed');
+                t.on('fail', function (cmp, first, second, desc) {
+                    box.find('.title').removeClass('ok').addClass('failed');
                     box.vars.fail ++;
                     
                     [ arrow, tArrow ].forEach(function (elem) {
@@ -47,8 +79,18 @@ $(window).ready(function () {
                         if (m) elem.attr('src', m[1] + '_fail.png');
                     });
                     
-                    if (!total.hasClass('failed')) total.addClass('failed');
+                    total.find('.title').removeClass('ok').addClass('failed');
                     total.vars.fail ++;
+                    
+                    var fail = jadeify('assert.jade', {
+                        cmp : cmp,
+                        first : JSON.stringify(first),
+                        second : JSON.stringify(second),
+                        desc : desc
+                    }).addClass('fail');
+                    
+                    box.find('.asserts').append(fail);
+                    total.find('.asserts').append(fail.clone());
                 });
                 
                 test[name](t);

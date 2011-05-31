@@ -13,14 +13,29 @@ body {
     padding: 15px;
 }
 
-.test {
-    background-color: rgb(200,250,220);
+.test .title {
     padding: 5px;
     margin-bottom: 4px;
 }
 
-.failed {
+.test .title:hover {
+    cursor: pointer;
+}
+
+.test .ok {
+    background-color: rgb(230,250,240);
+}
+
+.test .ok:hover {
+    background-color: rgb(150,230,180);
+}
+
+.test .failed {
     background-color: rgb(250,120,100);
+}
+
+.test .failed:hover {
+    background-color: rgb(255,100,80);
 }
 
 .test .title img {
@@ -35,4 +50,23 @@ body {
 
 .test .frames iframe {
     background-color: white;
+}
+
+.asserts {
+    display: none;
+    padding-left: 20px;
+    margin-bottom: 25px;
+}
+
+.asserts .assert {
+    margin-bottom: 5px;
+    padding: 5px;
+}
+
+.asserts .ok {
+    background-color: rgb(120,255,150);
+}
+
+.asserts .fail {
+    background-color: rgb(255,80,60);
 }
