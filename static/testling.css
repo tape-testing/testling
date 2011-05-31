@@ -19,6 +19,10 @@ body {
     margin-bottom: 4px;
 }
 
+.failed {
+    background-color: rgb(250,120,100);
+}
+
 .test .title img {
     float: left;
     margin-top: 10px;
