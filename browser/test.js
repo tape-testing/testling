@@ -34,9 +34,9 @@ Test.prototype.end = function () {
     this.running = false;
     this.emit('end');
 };
-    
+
 Test.prototype.fail = function (desc) {
-    if (this.running) this.emit('fail() called after test ended');
+    if (!this.running) this.emit('fail() called after test ended');
     this.emit('fail', new Error(desc));
 };
 
@@ -45,7 +45,7 @@ Test.prototype.ok = function (cond, desc) {
 };
 
 Test.prototype.equal = function (x, y, desc) {
-    if (this.running) {
+    if (!this.running) {
         this.emit('fail', 'equal() called after test ended');
     }
     else if (x == y) this.emit('ok', 'equal', x, y, desc);
@@ -53,7 +53,7 @@ Test.prototype.equal = function (x, y, desc) {
 };
 
 Test.prototype.deepEqual = function (x, y, desc) {
-    if (this.running) {
+    if (!this.running) {
         this.emit('fail', 'deepEqual() called after test ended');
     }
     else if (deepEquiv(x, y)) {
