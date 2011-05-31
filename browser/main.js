@@ -1,15 +1,14 @@
-var $ = require('jquery-browserify');
+var $ = require('jquery');
 var dnode = require('dnode');
 var jadeify = require('jadeify');
 var Test = require('./test');
 
 function createTestElement (name) {
     var box = jadeify('test.jade', {
-        name : 'total',
+        name : name,
         ok : 0,
         fail : 0,
     }).appendTo($('#tests'));
-    box.find('.title').addClass('ok');
     
     function toggleImage () {
         var im = box.find('.title img');
@@ -21,12 +20,12 @@ function createTestElement (name) {
         ));
     }
     
-    box.toggle(
+    box.find('.title').addClass('ok').toggle(
         function () {
-            $(this).find('.asserts').slideDown(200, toggleImage);
+            $(this).next('.more').slideDown(200, toggleImage);
         },
         function () {
-            $(this).find('.asserts').slideUp(200, toggleImage);
+            $(this).next('.more').slideUp(200, toggleImage);
         }
     );
     
@@ -50,9 +49,71 @@ $(window).ready(function () {
             Object.keys(test).forEach(function (name) {
                 var box = createTestElement(file + ' : ' + name);
                 
-                var t = new Test(name, box.find('.frames'));
+                var t = new Test(name, box.find('div .frames'));
                 var arrow = box.find('div.title img');
                 var tArrow = total.find('div.title img');
+                
+                t.on('frame', function (frame) {
+                    var dims = {
+                        width : frame.width(),
+                        height : frame.height(),
+                    };
+                    
+                    var prevTop = null;
+                    var toggleLink = $('<a>')
+                        .text('expand')
+                        .attr('href', '#')
+                        .toggle(
+                            function (ev) {
+                                ev.preventDefault();
+                                
+                                $(this).text('collapse');
+                                
+                                prevTop = $('body').scrollTop();
+                                var pos = toggleLink.position();
+                                $('body').animate({
+                                    scrollTop : pos.top
+                                }, 200);
+                                
+                                frame.animate(
+                                    {
+                                        width : $(window).width() - 100,
+                                        height : $(window).height() - 100,
+                                    },
+                                    200,
+                                    function () {
+                                        $('body').scrollTop(pos.top);
+                                    }
+                                );
+                            },
+                            function (ev) {
+                                ev.preventDefault();
+                                
+                                $(this).text('expand');
+                                
+                                $('body').animate({
+                                    scrollTop : prevTop
+                                }, 200);
+                                
+                                frame.animate(
+                                    {
+                                        width : dims.width,
+                                        height : dims.height,
+                                    },
+                                    200,
+                                    function () {
+                                        $('body').scrollTop(prevTop);
+                                    }
+                                );
+                            }
+                        )
+                    ;
+                    
+                    var fbar = jadeify('framebar.jade')
+                        .prependTo(box.find('.frames'))
+                    ;
+                    toggleLink.appendTo(fbar.find('.toggleLink'));
+                });
                 
                 t.on('ok', function (cmp, first, second, desc) {
                     box.vars.ok ++;
@@ -66,8 +127,8 @@ $(window).ready(function () {
                         class : 'ok'
                     });
                     
-                    box.find('.asserts').append(ok);
-                    total.find('.asserts').append(ok.clone());
+                    box.find('.more .asserts').append(ok);
+                    total.find('.more .asserts').append(ok.clone());
                 });
                 
                 t.on('fail', function (cmp, first, second, desc) {
@@ -91,8 +152,8 @@ $(window).ready(function () {
                         class : 'fail'
                     });
                     
-                    box.find('.asserts').append(fail);
-                    total.find('.asserts').append(fail.clone());
+                    box.find('.more .asserts').append(fail);
+                    total.find('.more .asserts').append(fail.clone());
                 });
                 
                 test[name](t);

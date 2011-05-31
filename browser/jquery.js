@@ -1,4 +1,4 @@
-var jQuery = require('jquery-browserify');
+var jQuery = require('jquery');
 
 module.exports = function (window) {
     return function (x) {

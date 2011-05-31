@@ -44,16 +44,27 @@ body {
     margin-right: 10px;
 }
 
-.test .frames {
+.test .more {
     display: none;
+}
+
+.test .frames {
+    text-align: center;
 }
 
 .test .frames iframe {
-    background-color: white;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    border: 4px rgb(100,100,255) solid;
+    width : 800px;
+    height: 150px;
+}
+
+.test .frames iframe:hover {
+    border-color: rgb(255,100,100);
 }
 
 .asserts {
-    display: none;
     padding-left: 20px;
     margin-bottom: 25px;
 }

@@ -28,7 +28,7 @@ var bundle = browserify({
         _tests : path.resolve(process.cwd(), testDir),
     },
     mount : argv.mount + '/browserify.js',
-    require : [ 'dnode', 'jquery-browserify' ],
+    require : [ 'dnode', { jquery : 'jquery-browserify' } ],
 });
 
 var jadeify = require('jadeify');
