@@ -1,0 +1,14 @@
+div.test
+  div.title
+    !{progress}
+    img.arrow(src='/images/down.png')
+    span.name #{name}
+    
+    div.overview
+      span !{$ok}
+      | &nbsp; ok
+      span !{$fail}
+      | &nbsp; failed
+  div.more
+    div.frames
+    div.asserts

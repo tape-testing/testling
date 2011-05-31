@@ -38,10 +38,34 @@ body {
     background-color: rgb(255,100,80);
 }
 
-.test .title img {
+.test .title .arrow {
     float: left;
     margin-top: 10px;
     margin-right: 10px;
+}
+
+.test .title .progress {
+    float: right;
+    margin-right: 5px;
+    height: 40px;
+    width: 200px;
+}
+
+.test .title .progress {
+    display: inline;
+}
+
+.test .title .progress .finished {
+    position: absolute;
+    overflow-x: hidden;
+    width: 0px;
+}
+
+.test .title .progress div img {
+    height: 100%;
+}
+
+.test .title .progress .remaining {
 }
 
 .test .more {
