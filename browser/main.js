@@ -22,7 +22,7 @@ function createTestElement (name) {
     
     box.percent = function (p) {
         progress.find('.finished').width(
-            Math.floor((p / 100) * pWidth)
+            Math.min(pWidth, Math.floor((p / 100) * pWidth))
         );
     };
     
@@ -148,6 +148,8 @@ $(window).ready(function () {
                     
                     box.find('.more .asserts').append(ok);
                     total.find('.more .asserts').append(ok.clone());
+                    
+                    if (t.planned) box.percent(t.count / t.planned * 100);
                 });
                 
                 t.on('fail', function (cmp, first, second, desc) {
@@ -173,6 +175,8 @@ $(window).ready(function () {
                     
                     box.find('.more .asserts').append(fail);
                     total.find('.more .asserts').append(fail.clone());
+                    
+                    if (t.planned) box.percent(t.count / t.planned * 100);
                 });
                 
                 t.on('end', function () {

@@ -4,6 +4,7 @@ var Test = module.exports = function (name, frameTarget) {
     this.name = name;
     this.windows = [];
     this.running = true;
+    this.count = 0;
     this.frameTarget = frameTarget;
 };
 
@@ -34,6 +35,11 @@ Test.prototype.createWindow = function (href, cb) {
     return win;
 };
 
+Test.prototype.plan = function (n) {
+    this.planned = (this.planned || 0) + n;
+    this.emit('plan', n);
+};
+
 Test.prototype.end = function () {
     this.running = false;
     this.emit('end');
@@ -49,15 +55,25 @@ Test.prototype.ok = function (cond, desc) {
 };
 
 Test.prototype.equal = function (x, y, desc) {
-    if (!this.running) {
+    this.count ++;
+    if (this.planned && this.count > this.planned) {
+        this.emit('fail', 'more tests run than planned');
+    }
+    else if (!this.running) {
         this.emit('fail', 'equal() called after test ended');
     }
     else if (x == y) this.emit('ok', 'equal', x, y, desc);
     else this.emit('fail', 'equal', x, y, desc);
+    
+    if (this.planned && this.count === this.planned) this.end();
 };
 
 Test.prototype.deepEqual = function (x, y, desc) {
-    if (!this.running) {
+    this.count ++;
+    if (this.planned && this.count > this.planned) {
+        this.emit('fail', 'more tests run than planned');
+    }
+    else if (!this.running) {
         this.emit('fail', 'deepEqual() called after test ended');
     }
     else if (deepEquiv(x, y)) {
@@ -66,6 +82,8 @@ Test.prototype.deepEqual = function (x, y, desc) {
     else {
         this.emit('fail', 'deepEqual', x, y, desc);
     }
+    
+    if (this.planned && this.count === this.planned) this.end();
 };
 
 function deepEquiv (x, y) {
