@@ -1,9 +1,10 @@
 var EventEmitter = require('events').EventEmitter;
 
-var Test = module.exports = function (name) {
+var Test = module.exports = function (name, frameTarget) {
     this.name = name;
     this.windows = [];
     this.running = true;
+    this.frameTarget = frameTarget;
 };
 
 Test.prototype = new EventEmitter;
@@ -14,13 +15,15 @@ Test.prototype.createWindow = function (href, cb) {
         href = null;
     }
     
-    $('<iframe>')
+    var frame = $('<iframe>')
         .addClass('viewport')
         .attr('src', href || 'about:blank')
-        .appendTo($('#tests'))
+        .appendTo(this.frameTarget)
     ;
+    
     var win = window[window.length - 1];
     this.windows.push(win);
+    this.emit('window', win);
     
     if (cb) process.nextTick(function () {
         $(win).ready(function () {

@@ -1,0 +1,34 @@
+body {
+    margin: 0px;
+}
+
+#menu {
+    height: 25px;
+    padding: 10px;
+    background-color: rgb(110,150,135);
+    color: white;
+}
+
+#tests {
+    padding: 15px;
+}
+
+.test {
+    background-color: rgb(200,250,220);
+    padding: 5px;
+    margin-bottom: 4px;
+}
+
+.test .title img {
+    float: left;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+.test .frames {
+    display: none;
+}
+
+.test .frames iframe {
+    background-color: white;
+}

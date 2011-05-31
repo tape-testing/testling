@@ -17,6 +17,7 @@ var browserify = require('browserify');
 var express = require('express');
 
 var app = express.createServer();
+app.use(express.static(__dirname + '/static'));
 app.listen(argv.port);
 
 var bundle = browserify({
