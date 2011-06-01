@@ -35,7 +35,8 @@
         "jadeify" : ">=0.1.0 <0.2",
         "browserify" : ">=0.4.13 <0.5",
         "dnode" : "=0.6.11",
-        "jquery-browserify" : "=1.6.0"
+        "jquery-browserify" : "=1.6.0",
+        "http-proxy" : ">=0.5.9 <0.6"
     },
     "devDependencies" : {
         "expresso" : "=0.7.x"

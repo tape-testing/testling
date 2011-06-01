@@ -1,5 +1,6 @@
 var argv = require('optimist')
-    .demand(1)
+    .demand('url')
+    .demand('tests')
     .options('mount', {
         desc : 'Prefix to mount testling routes at',
         default : '/testling',
@@ -7,10 +8,12 @@ var argv = require('optimist')
     .default('port', 8080)
     .argv
 ;
-var testDir = argv._[0];
+var testDir = argv.tests;
 
 var fs = require('fs');
 var path = require('path');
+var url = require('url');
+
 var version = JSON.parse(fs.readFileSync(__dirname + '/package.json')).version;
 var browserify = require('browserify');
 
@@ -20,8 +23,19 @@ var app = express.createServer();
 app.use(argv.mount, express.static(__dirname + '/static'));
 app.listen(argv.port);
 
-//var httpProxy = require('http-proxy');
-//var proxy = new httpProxy.HttpProxy();
+var httpProxy = require('http-proxy');
+var proxy = new httpProxy.HttpProxy();
+
+app.use(function (req, res, next) {
+    if (req.url.slice(0, argv.mount.length) !== argv.mount) {
+        var u = url.parse(argv.url);
+        proxy.proxyRequest(req, res, {
+            host : u.hostname,
+            port : u.port || 80,
+        });
+    }
+    else next();
+});
 
 var bundle = browserify({
     entry : __dirname + '/browser/main.js',
