@@ -2,8 +2,9 @@
 html
   head
     title testling v#{version}
-    link(rel='stylesheet', href='/testling.css')
-    script(type='text/javascript', src=mount+'/browserify.js')
+    base(href=mount+'/')
+    link(rel='stylesheet', href='testling.css')
+    script(type='text/javascript', src='browserify.js')
   body
     div#menu [testling]
     div#tests

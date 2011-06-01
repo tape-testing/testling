@@ -1,5 +1,4 @@
 var $ = require('jquery');
-var dnode = require('dnode');
 var jadeify = require('jadeify');
 var Test = require('./test');
 
@@ -17,9 +16,11 @@ function createTestElement (name) {
     var pWidth = progress.width();
     var pHeight = progress.height();
     
-    progress.find('.finished img').width(pWidth).height(pHeight);
-    progress.find('.remaining img').width(pWidth).height(pHeight);
-    progress.find('.percent').width(pWidth);
+    progress.ready(function () {
+        progress.find('.finished img').width(pWidth).height(pHeight);
+        progress.find('.remaining img').width(pWidth).height(pHeight);
+        progress.find('.percent').width(pWidth);
+    });
     
     box.complete = function (p) {
         if (box !== total) {

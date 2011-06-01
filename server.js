@@ -17,8 +17,11 @@ var browserify = require('browserify');
 var express = require('express');
 
 var app = express.createServer();
-app.use(express.static(__dirname + '/static'));
+app.use(argv.mount, express.static(__dirname + '/static'));
 app.listen(argv.port);
+
+//var httpProxy = require('http-proxy');
+//var proxy = new httpProxy.HttpProxy();
 
 var bundle = browserify({
     entry : __dirname + '/browser/main.js',
@@ -28,7 +31,7 @@ var bundle = browserify({
         _tests : path.resolve(process.cwd(), testDir),
     },
     mount : argv.mount + '/browserify.js',
-    require : [ 'dnode', { jquery : 'jquery-browserify' } ],
+    require : { jquery : 'jquery-browserify' },
 });
 
 var jadeify = require('jadeify');
