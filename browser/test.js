@@ -24,11 +24,17 @@ Test.prototype.createWindow = function (href, cb) {
     
     var win = window[window.length - 1];
     this.windows.push(win);
-    if (cb) $(win).load(function () {
-        process.nextTick(function () {
-            cb(win)
-        });
-    });
+    if (cb) {
+        var fn = function () {
+            process.nextTick(function () {
+                cb(win)
+            });
+        };
+        $(win).load(fn);
+        if (win.document.readState === 'complete') {
+            fn(); // load event already fired, call directly
+        }
+    }
     
     this.emit('window', win);
     this.emit('frame', frame);

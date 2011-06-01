@@ -51,6 +51,10 @@ body {
     width: 200px;
 }
 
+.test .title .button {
+    float: right;
+}
+
 .test .title .progress {
     display: inline;
 }

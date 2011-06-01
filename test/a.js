@@ -1,4 +1,4 @@
-exports.browserlingSignIn = function (t) {
+exports['sign in'] = function (t) {
     t.plan(8);
     
     t.createWindow('/', function (window) {
