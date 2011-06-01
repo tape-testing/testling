@@ -24,14 +24,11 @@ Test.prototype.createWindow = function (href, cb) {
     
     var win = window[window.length - 1];
     this.windows.push(win);
+    if (cb) $(win).load(function () { cb(win) });
+    
     this.emit('window', win);
     this.emit('frame', frame);
     
-    if (cb) process.nextTick(function () {
-        $(win).ready(function () {
-            cb(win)
-        });
-    });
     return win;
 };
 
@@ -41,8 +38,10 @@ Test.prototype.plan = function (n) {
 };
 
 Test.prototype.end = function () {
-    this.running = false;
-    this.emit('end');
+    if (this.running) {
+        this.running = false;
+        this.emit('end');
+    }
 };
 
 Test.prototype.fail = function (desc) {
@@ -51,7 +50,7 @@ Test.prototype.fail = function (desc) {
 };
 
 Test.prototype.ok = function (cond, desc) {
-    this.equal(cond, true, desc);
+    this.equal(Boolean(cond), true, desc);
 };
 
 Test.prototype.equal = function (x, y, desc) {

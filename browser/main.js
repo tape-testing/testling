@@ -1,6 +1,13 @@
 var $ = require('jquery');
 var jadeify = require('jadeify');
 var Test = require('./test');
+var traverse = require('traverse');
+
+function stringify (obj) {
+    return JSON.stringify(traverse(obj).map(function () {
+        if (this.circular) this.update('[ Circular ]')
+    }));
+}
 
 var total = null;
 
@@ -100,10 +107,16 @@ $(window).ready(function () {
                 var tArrow = total.find('div.title img.arrow');
                 
                 t.on('frame', function (frame) {
+                    frame.width($(window).width() - 100);
+                    
                     var dims = {
                         width : frame.width(),
                         height : frame.height(),
                     };
+                    
+                    $(window).resize(function () {
+                        frame.width($(window).width() - 100);
+                    });
                     
                     var prevTop = null;
                     var toggleLink = $('<a>')
@@ -124,7 +137,7 @@ $(window).ready(function () {
                                 frame.animate(
                                     {
                                         width : $(window).width() - 100,
-                                        height : $(window).height() - 100,
+                                        height : $(window).height() - 50,
                                     },
                                     200,
                                     function () {
@@ -167,8 +180,8 @@ $(window).ready(function () {
                     
                     var ok = jadeify('assert.jade', {
                         cmp : cmp,
-                        first : JSON.stringify(first),
-                        second : JSON.stringify(second),
+                        first : stringify(first),
+                        second : stringify(second),
                         desc : desc,
                         class : 'ok'
                     });
@@ -194,8 +207,8 @@ $(window).ready(function () {
                     
                     var fail = jadeify('assert.jade', {
                         cmp : cmp,
-                        first : JSON.stringify(first),
-                        second : JSON.stringify(second),
+                        first : stringify(first),
+                        second : stringify(second),
                         desc : desc,
                         class : 'fail'
                     });
