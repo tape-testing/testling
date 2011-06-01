@@ -24,7 +24,11 @@ Test.prototype.createWindow = function (href, cb) {
     
     var win = window[window.length - 1];
     this.windows.push(win);
-    if (cb) $(win).load(function () { cb(win) });
+    if (cb) $(win).load(function () {
+        process.nextTick(function () {
+            cb(win)
+        });
+    });
     
     this.emit('window', win);
     this.emit('frame', frame);

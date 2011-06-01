@@ -1,5 +1,5 @@
-exports.rawr = function (t) {
-    t.plan(9);
+exports.browserlingSignIn = function (t) {
+    t.plan(8);
     
     t.createWindow('/', function (window) {
         var $ = require('jquery')(window);
@@ -8,32 +8,35 @@ exports.rawr = function (t) {
         var email = $(form[0].elements['sign-in.email']);
         var password = $(form[0].elements['sign-in.password']);
         
-        t.ok(email[0], 'email element');
-        t.ok(password[0], 'password element');
+        if ($('.session-destroy').is(':visible')) {
+            $('.session-destroy').click();
+        }
         
-        t.ok(email.is(':hidden'), 'email input hidden');
-        t.ok(password.is(':hidden'), 'password input hidden');
-        
-        t.equal(
-            $('#user-bar .session-email').text(), '',
-            'session empty'
-        );
-        
-        t.ok($('#sign-in-link')[0]);
-        $('#sign-in-link').trigger('click');
-        
-        process.nextTick(function () {
-            t.ok(email.is(':visible'));
-            t.ok(password.is(':visible'));
+        setTimeout(function () {
+            t.ok(email[0], 'email element');
+            t.ok(password[0], 'password element');
             
-            email.val('a@b.c');
-            password.val('abc');
-            $('#sign-in-form').submit();
+            t.ok(email.is(':hidden'), 'email input hidden');
+            t.ok(password.is(':hidden'), 'password input hidden');
             
-            process.nextTick(function () {
-                t.equal($('#user-bar .session-email').text(), 'a@b.c');
-                t.end();
-            });
-        });
+            setTimeout(function () {
+                t.ok($('#sign-in-link')[0]);
+                t.ok($('#sign-in-link').is(':visible'));
+                $('#sign-in-link').click();
+                
+                setTimeout(function () {
+                    t.ok(form.is(':visible'));
+                    
+                    email.val('a@b.c');
+                    password.val('abc');
+                    $('#sign-in-form').submit();
+                    
+                    setTimeout(function () {
+                        t.equal($('#user-bar .session-email').text(), 'a@b.c');
+                        t.end();
+                    }, 500);
+                }, 500);
+            }, 500);
+        }, 500);
     });
 };
