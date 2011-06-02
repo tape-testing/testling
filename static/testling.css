@@ -53,6 +53,11 @@ body {
 
 .test .title .button {
     float: right;
+    margin-right: 10px;
+}
+
+.test .title .button:hover {
+    cursor: pointer;
 }
 
 .test .title .progress {
