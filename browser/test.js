@@ -32,7 +32,7 @@ Test.prototype.createWindow = function (href, cb) {
             });
         };
         $(win).load(fn);
-        if (win.document.readState === 'complete') {
+        if (win.document.readyState === 'complete') {
             fn(); // load event already fired, call directly
         }
     }
