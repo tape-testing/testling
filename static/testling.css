@@ -31,6 +31,14 @@ body {
     background-color: rgb(150,230,180);
 }
 
+.test .title.all-ok {
+    background-color: rgb(180,250,240);
+}
+
+.test .title.all-ok:hover {
+    background-color: rgb(130,255,245);
+}
+
 .test .title.fail {
     background-color: rgb(250,120,100);
 }

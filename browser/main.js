@@ -67,6 +67,8 @@ function createTestElement (name, refreshFn) {
         progress.find('.percent').text(
             Math.min(100, Math.floor(p * 100)) + ' %'
         );
+        
+        box.find('.title').removeClass('ok').addClass('all-ok');
     };
     
     function toggleImage () {
@@ -219,8 +221,14 @@ function runTest (file, key, test) {
             total.find('.more .asserts').append(ok.clone());
             
             if (boxes.every(function (tt) {
-                return tt.find('.title').hasClass('ok');
+                return tt.find('.title').hasClass('ok')
+                    || tt.find('.title').hasClass('all-ok')
+                ;
             })) total.find('.title').addClass('ok');
+            
+            if (boxes.every(function (tt) {
+                return tt.find('.title').hasClass('all-ok')
+            })) total.find('.title').removeClass('ok').addClass('all-ok');
             
             if (t.planned) box.complete(t.count / t.planned);
         });
