@@ -1,10 +1,11 @@
 exports['sign in'] = function (t) {
-    t.plan(8);
+    t.plan(10);
     
     t.createWindow('/', function (window) {
         var $ = require('jquery')(window);
         
         var form = $('#sign-in-form');
+        t.ok(form[0], 'form element exists');
         var email = $(form[0].elements['sign-in.email']);
         var password = $(form[0].elements['sign-in.password']);
         

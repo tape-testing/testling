@@ -31,10 +31,8 @@ Test.prototype.createWindow = function (href, cb) {
                 cb(win)
             });
         };
+        
         $(win).load(fn);
-        if (win.document.readyState === 'complete') {
-            fn(); // load event already fired, call directly
-        }
     }
     
     this.emit('window', win);
