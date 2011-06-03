@@ -79,7 +79,7 @@ function createTestElement (name, refreshFn) {
         ));
     }
     
-    box.find('.title').addClass('ok').toggle(
+    box.find('.title').toggle(
         function () {
             $(this).next('.more').slideDown(200, toggleImage);
         },
@@ -115,6 +115,7 @@ $(window).ready(function reload () {
 });
 
 var running = {};
+var boxes = [];
 
 function runTest (file, key, test) {
     running[key] = Object.keys(test);
@@ -124,12 +125,13 @@ function runTest (file, key, test) {
             // first somehow stop the test if it's running
             runTest(file, key, test);
         });
+        boxes.push(box);
         
         var t = new Test(name, box.find('div .frames'));
         total.tests.push(t);
         
-        var arrow = box.find('div.title img.arrow');
-        var tArrow = total.find('div.title img.arrow');
+        var arrow = box.find('.title img.arrow');
+        var tArrow = total.find('.title img.arrow');
         
         t.on('frame', function (frame) {
             frame.width($(window).width() - 100);
@@ -200,6 +202,8 @@ function runTest (file, key, test) {
         });
         
         t.on('ok', function (cmp, first, second, desc) {
+            var title = box.find('.title');
+            if (!title.hasClass('fail')) title.addClass('ok');
             box.vars.ok ++;
             total.vars.ok ++;
             
@@ -213,6 +217,10 @@ function runTest (file, key, test) {
             
             box.find('.more .asserts').append(ok);
             total.find('.more .asserts').append(ok.clone());
+            
+            if (boxes.every(function (tt) {
+                return tt.find('.title').hasClass('ok');
+            })) total.find('.title').addClass('ok');
             
             if (t.planned) box.complete(t.count / t.planned);
         });

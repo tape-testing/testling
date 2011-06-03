@@ -16,6 +16,7 @@ body {
 .test .title {
     padding: 5px;
     margin-bottom: 4px;
+    background-color: rgb(255,240,150);
 }
 
 .test .title:hover {
