@@ -1,6 +1,8 @@
 var traverse = require('traverse');
 
 exports.naive = function (t) {
+    t.plan(1);
+    
     var a = [1];
     a.push(a);
     var b = [1];

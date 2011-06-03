@@ -68,7 +68,7 @@ function createTestElement (name, refreshFn) {
             Math.min(100, Math.floor(p * 100)) + ' %'
         );
         
-        box.find('.title').removeClass('ok').addClass('all-ok');
+        if (p >= 1) box.find('.title').removeClass('ok').addClass('all-ok');
     };
     
     function toggleImage () {
