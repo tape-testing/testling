@@ -257,6 +257,11 @@ function runTest (file, key, test) {
             }
         });
         
-        test[name](t);
+        try {
+            test[name](t);
+        }
+        catch (err) {
+            t.emit('fail', 'throw', null, null, err);
+        }
     });
 }
