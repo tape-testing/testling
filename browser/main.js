@@ -106,7 +106,18 @@ function createTestElement (name, refreshFn) {
     return box;
 }
 
+var path = require('path');
+
 $(window).ready(function reload () {
+    if (navigator.vendor.match(/^google/i)) {
+        $('#browsers .chrome').addClass('active');
+    }
+    
+    $('#browsers img').each(function () {
+        var src = $(this).attr('src');
+        var browser = path.basename(src).replace(/\.[^.\/]+$/, '');
+    });
+    
     total = createTestElement('total', function () {
         // somehow stop all the tests first...
         reload();

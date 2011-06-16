@@ -16,6 +16,10 @@ body {
     top: 0px;
 }
 
+.active {
+    background-color: rgb(110,200,155);
+}
+
 #tests {
     padding: 15px;
 }
