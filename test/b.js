@@ -1,7 +1,7 @@
 var traverse = require('traverse');
 
 exports.naive = function (t) {
-    t.plan(1);
+    t.plan(3);
     
     var a = [1];
     a.push(a);
@@ -9,6 +9,16 @@ exports.naive = function (t) {
     b.push(a);
     
     t.notDeepEqual(a, b);
+    
+    var c = [1];
+    c.push(c);
+    
+    t.deepEqual(a, c);
+    
+    var d = [1];
+    d.push(c);
+    
+    t.deepEqual(b, d);
 };
 
 exports.cmp = function (t) {

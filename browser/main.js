@@ -68,7 +68,9 @@ function createTestElement (name, refreshFn) {
             Math.min(100, Math.floor(p * 100)) + ' %'
         );
         
-        if (p >= 1) box.find('.title').removeClass('ok').addClass('all-ok');
+        if (p >= 1 && !box.find('.title').hasClass('fail')) {
+            box.find('.title').removeClass('ok').addClass('all-ok');
+        }
     };
     
     function toggleImage () {
@@ -81,14 +83,21 @@ function createTestElement (name, refreshFn) {
         ));
     }
     
-    box.find('.title').toggle(
-        function () {
-            $(this).next('.more').slideDown(200, toggleImage);
-        },
-        function () {
-            $(this).next('.more').slideUp(200, toggleImage);
+    box.expand = function (delay) {
+        var more = box.find('.more');
+        if (more.is(':hidden')) {
+            more.slideDown(delay === undefined ? 200 : delay, toggleImage);
         }
-    );
+    };
+    
+    box.collapse = function (delay) {
+        var more = box.find('.more');
+        if (more.is(':visible')) {
+            more.slideUp(delay === undefined ? 200 : delay, toggleImage);
+        }
+    };
+    
+    box.find('.title').toggle(box.expand, box.collapse);
     
     return box;
 }
@@ -122,10 +131,24 @@ var boxes = [];
 function runTest (file, key, test) {
     running[key] = Object.keys(test);
     
-    Object.keys(test).forEach(function (name) {
+    Object.keys(test).forEach(function loadTest (name) {
         var box = createTestElement(file + ' : ' + name, function () {
             // first somehow stop the test if it's running
-            runTest(file, key, test);
+            
+            if (!running[key]) running[key] = [];
+            
+            var b = loadTest(name);
+            //var shouldExpand = false;
+            
+            if (box.find('.more').is(':visible')) {
+                //shouldExpand = true;
+                b.expand(0);
+            }
+            
+            box.replaceWith(b);
+            //b.expand();
+            
+            //runTest(file, key, test);
         });
         boxes.push(box);
         
@@ -279,5 +302,7 @@ function runTest (file, key, test) {
         catch (err) {
             t.emit('fail', 'throw', null, null, err);
         }
+        
+        return box;
     });
 }
