@@ -3,10 +3,17 @@ body {
 }
 
 #menu {
-    height: 25px;
+    height: 45px;
     padding: 10px;
+    font-size: 30px;
     background-color: rgb(110,150,135);
     color: white;
+}
+
+#browsers {
+    position: absolute;
+    right: 0px;
+    top: 0px;
 }
 
 #tests {

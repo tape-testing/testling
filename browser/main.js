@@ -84,16 +84,20 @@ function createTestElement (name, refreshFn) {
     }
     
     box.expand = function (delay) {
+        if (typeof delay !== 'number') delay = 200;
+        
         var more = box.find('.more');
         if (more.is(':hidden')) {
-            more.slideDown(delay === undefined ? 200 : delay, toggleImage);
+            more.slideDown(delay, toggleImage);
         }
     };
     
     box.collapse = function (delay) {
+        if (typeof delay !== 'number') delay = 200;
+        
         var more = box.find('.more');
         if (more.is(':visible')) {
-            more.slideUp(delay === undefined ? 200 : delay, toggleImage);
+            more.slideUp(delay, toggleImage);
         }
     };
     
