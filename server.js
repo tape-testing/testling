@@ -11,6 +11,7 @@ var argv = require('optimist')
 var testDir = argv.tests;
 
 var fs = require('fs');
+var util = require('util');
 var path = require('path');
 var url = require('url');
 
@@ -21,39 +22,29 @@ var express = require('express');
 
 var app = express.createServer();
 app.use(argv.mount, express.static(__dirname + '/static'));
-app.listen(argv.port);
-
-var httpProxy = require('http-proxy');
-var proxy = new httpProxy.HttpProxy();
-
-app.use(function (req, res, next) {
-    if (req.url.slice(0, argv.mount.length) !== argv.mount) {
-        var u = url.parse(argv.url);
-        proxy.proxyRequest(req, res, {
-            host : u.hostname,
-            port : u.port || 80,
-        });
-    }
-    else next();
-});
-
-var bundle = browserify({
-    entry : __dirname + '/browser/main.js',
-    base : {
-        './test' : __dirname + '/browser/test.js',
-        '_tests/node_modules/jquery' : __dirname + '/browser/jquery.js',
-        _tests : path.resolve(process.cwd(), testDir),
-    },
-    mount : argv.mount + '/browserify.js',
-    require : [
-        { jquery : 'jquery-browserify' }
-    ],
-});
 
 var jadeify = require('jadeify');
-bundle.use(jadeify(__dirname + '/views'));
 
-app.use(bundle);
+util.print('Generating bundle... ');
+var bundle = browserify({
+        mount : argv.mount + '/browserify.js',
+    })
+    .require({ jquery : 'jquery-browserify' })
+    .require(__dirname + '/browser/jquery.js', {
+        target : '_tests/node_modules/jquery/index.js'
+    })
+    .use(jadeify(__dirname + '/views'))
+    .addEntry(__dirname + '/browser/main.js')
+;
+
+fs.readdirSync(testDir)
+    .map(function (file) { return path.resolve(testDir, file) })
+    .forEach(function (file) {
+        bundle.require(file, { target : '/_tests/' + path.basename(file) })
+    })
+;
+
+console.log('done');
 
 app.helpers({
     mount : argv.mount,
@@ -66,3 +57,22 @@ app.get(argv.mount, function (req, res) {
         version : version,
     });
 });
+
+var httpProxy = require('http-proxy');
+var proxy = new httpProxy.HttpProxy();
+
+app.use(bundle);
+
+app.use(function (req, res, next) {
+    if (req.url.slice(0, argv.mount.length) !== argv.mount) {
+        var u = url.parse(argv.url);
+        proxy.proxyRequest(req, res, {
+            host : u.hostname,
+            port : u.port || 80,
+        });
+    }
+    else next();
+});
+
+console.log('Listening on :' + argv.port + argv.mount);
+app.listen(argv.port);

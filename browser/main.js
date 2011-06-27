@@ -126,12 +126,12 @@ $(window).ready(function reload () {
     
     Object.keys(require.modules)
         .filter(function (key) {
-            return key.match(/^_tests\/[^\/]+$/);
+            return key.match(/^\/_tests\/[^\/]+$/);
         })
         .forEach(function (key) {
-            var test = require(key);
+            var test = require.call(null, key);
             var file = key
-                .replace(/^_tests\//, '')
+                .replace(/^\/_tests\//, '')
                 .replace(/(.js)?$/, '.js')
             ;
             
