@@ -17,60 +17,70 @@ function createTestElement (name, refreshFn) {
         progress : jadeify('progress.jade')[0].outerHTML,
         ok : 0,
         fail : 0,
-    }).appendTo($('#tests'));
-    
-    box.find('.title .refresh')
-        .mouseover(function () {
-            $(this).attr('src', 'images/refresh_hover.png');
-        })
-        .mouseout(function () {
-            $(this).attr('src', 'images/refresh.png');
-        })
-        .click(function (ev) {
-            ev.stopPropagation();
-            refreshFn();
-        })
-    ;
-    
-    var progress = box.find('.progress');
-    var pWidth = progress.width();
-    var pHeight = progress.height();
-    
-    progress.ready(function () {
-        progress.find('.finished img').width(pWidth).height(pHeight);
-        progress.find('.remaining img').width(pWidth).height(pHeight);
-        progress.find('.percent').width(pWidth);
     });
     
+    box.render = function () {
+        box.find('.title .refresh')
+            .mouseover(function () {
+                $(this).attr('src', 'images/refresh_hover.png');
+            })
+            .mouseout(function () {
+                $(this).attr('src', 'images/refresh.png');
+            })
+            .click(function (ev) {
+                ev.stopPropagation();
+                refreshFn();
+            })
+        ;
+        
+        var progress = box.find('.progress');
+        var pWidth = progress.width();
+        var pHeight = progress.height();
+        
+        progress.ready(function () {
+            progress.find('.finished img').width(pWidth).height(pHeight);
+            progress.find('.remaining img').width(pWidth).height(pHeight);
+            progress.find('.percent').width(pWidth);
+        });
+        
+        box.find('.title').toggle(box.expand, box.collapse);
+    };
+    
     box.complete = function (p) {
-        if (box !== total) {
-            var ran = 0, planned = 0;
-            total.tests.forEach(function (t) {
-                ran += t.count;
-                if (!t.running) {
-                    planned += t.count;
-                }
-                else if (t.planned) {
-                    planned += t.planned;
-                }
-                else {
-                    planned = undefined;
-                }
-            });
+        box.ready(function () {
+            var progress = box.find('.progress');
+            var pWidth = progress.width();
+            var pHeight = progress.height();
             
-            if (planned) total.complete(ran / planned);
-        }
+            if (box !== total) {
+                var ran = 0, planned = 0;
+                total.tests.forEach(function (t) {
+                    ran += t.count;
+                    if (!t.running) {
+                        planned += t.count;
+                    }
+                    else if (t.planned) {
+                        planned += t.planned;
+                    }
+                    else {
+                        planned = undefined;
+                    }
+                });
+                
+                if (planned) total.complete(ran / planned);
+            }
+            
+            progress.find('.finished').width(
+                Math.min(pWidth, Math.floor(p * pWidth))
+            );
+            progress.find('.percent').text(
+                Math.min(100, Math.floor(p * 100)) + ' %'
+            );
         
-        progress.find('.finished').width(
-            Math.min(pWidth, Math.floor(p * pWidth))
-        );
-        progress.find('.percent').text(
-            Math.min(100, Math.floor(p * 100)) + ' %'
-        );
-        
-        if (p >= 1 && !box.find('.title').hasClass('fail')) {
-            box.find('.title').removeClass('ok').addClass('all-ok');
-        }
+            if (p >= 1 && !box.find('.title').hasClass('fail')) {
+                box.find('.title').removeClass('ok').addClass('all-ok');
+            }
+        });
     };
     
     function toggleImage () {
@@ -101,8 +111,6 @@ function createTestElement (name, refreshFn) {
         }
     };
     
-    box.find('.title').toggle(box.expand, box.collapse);
-    
     return box;
 }
 
@@ -122,6 +130,8 @@ $(window).ready(function reload () {
         // somehow stop all the tests first...
         reload();
     });
+    total.appendTo('#tests');
+    total.render();
     total.tests = [];
     
     Object.keys(require.modules)
@@ -146,27 +156,31 @@ var boxes = [];
 function runTest (file, key, test) {
     running[key] = Object.keys(test);
     
-    Object.keys(test).forEach(function loadTest (name) {
-        var box = createTestElement(file + ' : ' + name, function () {
-            // first somehow stop the test if it's running
-            
-            if (!running[key]) running[key] = [];
-            
-            var b = loadTest(name);
-            //var shouldExpand = false;
-            
-            if (box.find('.more').is(':visible')) {
-                //shouldExpand = true;
-                b.expand(0);
-            }
-            
-            box.replaceWith(b);
-            //b.expand();
-            
-            //runTest(file, key, test);
-        });
-        boxes.push(box);
+    Object.keys(test).map(function (name) {
+        var b = loadTest(file, key, name, test);
+        b.appendTo('#tests');
+        b.render();
+    });
+}
+
+function loadTest (file, key, name, test) {
+    var box = createTestElement(file + ' : ' + name, function () {
+        // first somehow stop the test if it's running
         
+        if (!running[key]) running[key] = [];
+        
+        var b = loadTest(file, key, name, test);
+        
+        if (box.find('.more').is(':visible')) {
+            b.expand(0);
+        }
+        
+        box.replaceWith(b);
+        b.render();
+    });
+    boxes.push(box);
+    
+    box.ready(function () {
         var t = new Test(name, box.find('div .frames'));
         total.tests.push(t);
         
@@ -317,7 +331,7 @@ function runTest (file, key, test) {
         catch (err) {
             t.emit('fail', 'throw', null, null, err);
         }
-        
-        return box;
     });
+    
+    return box;
 }

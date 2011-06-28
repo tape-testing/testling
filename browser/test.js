@@ -1,5 +1,6 @@
 var EventEmitter = require('events').EventEmitter;
 var traverse = require('traverse');
+var jquery = require('jquery');
 
 var Test = module.exports = function (name, frameTarget) {
     this.name = name;
@@ -28,7 +29,12 @@ Test.prototype.createWindow = function (href, cb) {
     if (cb) {
         var fn = function () {
             process.nextTick(function () {
-                cb(win)
+                cb(win, function (x) {
+                    return arguments.length === 1
+                        ? jquery(x, win.document)
+                        : jquery.apply(null, arguments)
+                    ;
+                })
             });
         };
         

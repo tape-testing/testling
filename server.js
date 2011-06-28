@@ -30,9 +30,6 @@ var bundle = browserify({
         mount : argv.mount + '/browserify.js',
     })
     .require({ jquery : 'jquery-browserify' })
-    .require(__dirname + '/browser/jquery.js', {
-        target : '_tests/node_modules/jquery/index.js'
-    })
     .use(jadeify(__dirname + '/views'))
     .addEntry(__dirname + '/browser/main.js')
 ;
