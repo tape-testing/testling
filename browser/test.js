@@ -3,11 +3,16 @@ var jadeify = require('jadeify');
 var TestHandle = require('./test_handle');
 var traverse = require('traverse');
 var stackedy = require('stackedy');
+var testFiles = (require)('test_files');
 
 var Test = module.exports = function (name) {
+    if (!(this instanceof Test)) return new Test(name);
+    
     var self = this;
-    self.source = require.modules['/_tests/' + name + '.js'].toString();
-    self.stackedy = stackedy(source, { filename : name + '.js' });
+    self.name = name;
+    
+    var source = self.source = testFiles[name];
+    self.stackedy = stackedy(source, { filename : name });
     
     var box = self.box = jadeify('test.jade', {
         name : name,
@@ -33,13 +38,8 @@ var Test = module.exports = function (name) {
 }
 
 Test.all = function () {
-    return Object.keys(require.modules)
-        .map(function (key) {
-            var m = key.match(/^\/tests\/[^\/]+$/);
-            return m && m[1];
-        })
-        .filter(Boolean)
-        .map(function (key) {
+    return Object.keys(testFiles)
+        .map(function (name) {
             return new Test(name);
         })
     ;
@@ -61,9 +61,16 @@ Test.prototype.run = function (context) {
         self.box.vars.fail ++;
     });
     
-    return self.stackedy.run(context);
+    return self.stackedy
+        .run(context)
+        .on('error', function (s) {
+            console.dir(s);
+            self.box.vars.fail ++;
+        })
+    ;
 };
 
 Test.prototype.stop = function () {
     this.stackedy.stop();
+    self.stackedy.removeAllListeners('error');
 };

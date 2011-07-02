@@ -8,12 +8,12 @@ var argv = require('optimist')
     .default('port', 8080)
     .argv
 ;
-var testDir = argv.tests;
-
 var fs = require('fs');
 var util = require('util');
 var path = require('path');
 var url = require('url');
+
+var testDir = path.resolve(process.cwd(), argv.tests);
 
 var version = JSON.parse(fs.readFileSync(__dirname + '/package.json')).version;
 var browserify = require('browserify');
@@ -24,21 +24,17 @@ var app = express.createServer();
 app.use(argv.mount, express.static(__dirname + '/static'));
 
 var jadeify = require('jadeify');
+var fileify = require('fileify');
 
 util.print('Generating bundle... ');
 var bundle = browserify({
         mount : argv.mount + '/browserify.js',
+        watch : true,
     })
     .require({ jquery : 'jquery-browserify' })
     .use(jadeify(__dirname + '/views'))
+    .use(fileify('test_files', testDir))
     .addEntry(__dirname + '/browser/main.js')
-;
-
-fs.readdirSync(testDir)
-    .map(function (file) { return path.resolve(testDir, file) })
-    .forEach(function (file) {
-        bundle.require(file, { target : '/_tests/' + path.basename(file) })
-    })
 ;
 
 console.log('done');
