@@ -6,7 +6,9 @@ html
     link(rel='stylesheet', href='testling.css')
     script(type='text/javascript', src='browserify.js')
   body
-    div#menu [testling]
+    div#menu
+      img#all.button(src='images/play.png', alt='play all', title='play all')
+      div.logo [testling]
       div#browsers
         img.browser.explorer(src='images/browsers/explorer.png')
         img.browser.firefox(src='images/browsers/firefox.png')

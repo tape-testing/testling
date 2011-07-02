@@ -14,8 +14,38 @@ $(window).ready(function reload () {
         var browser = path.basename(src).replace(/\.[^.\/]+$/, '');
     });
     
-    Test.all().forEach(function (t) {
+    var tests = Test.all();
+    
+    tests.forEach(function (t) {
         t.box.appendTo('#tests');
-        t.run();
+    });
+    
+    var pending = 0;
+    $('#all.button').click(function play () {
+console.log('click');
+        var button = $(this);
+        
+        var pending = tests.length;
+        tests.forEach(function (t) {
+            t.once('end', function () {
+                pending --;
+                
+                if (pending === 0) {
+                    button.attr('src', 'images/refresh.png');
+                }
+            });
+            
+            if (!t.running) t.run();
+        });
+        
+        button
+            .attr('src', 'images/stop.png')
+            .unbind('click')
+            .click(function stop () {
+                tests.forEach(function (t) { t.stop() });
+                
+                button.unbind('click').click(play);
+            })
+        ;
     });
 });

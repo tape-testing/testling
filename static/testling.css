@@ -10,6 +10,11 @@ body {
     color: white;
 }
 
+#menu .logo {
+    margin-top: -40px;
+    margin-left: 35px;
+}
+
 #browsers {
     position: absolute;
     right: 0px;
@@ -34,27 +39,27 @@ body {
     cursor: pointer;
 }
 
-.test .title.ok {
+.test.ok .title {
     background-color: rgb(230,250,240);
 }
 
-.test .title.ok:hover {
+.test.ok .title:hover {
     background-color: rgb(150,230,180);
 }
 
-.test .title.all-ok {
+.test.ok.all .title {
     background-color: rgb(180,250,240);
 }
 
-.test .title.all-ok:hover {
+.test.ok.all .title:hover {
     background-color: rgb(130,255,245);
 }
 
-.test .title.fail {
+.test.fail .title {
     background-color: rgb(250,120,100);
 }
 
-.test .title.fail:hover {
+.test.fail .title:hover {
     background-color: rgb(255,100,80);
 }
 
@@ -93,6 +98,7 @@ body {
 
 .test .title .progress .percent {
     position: absolute;
+    width: 150px;
     font-weight: bold;
     z-index: 10;
     text-align: center;
