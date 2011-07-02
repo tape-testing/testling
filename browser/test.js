@@ -1,119 +1,69 @@
-var EventEmitter = require('events').EventEmitter;
+var $ = require('jquery');
+var jadeify = require('jadeify');
+var TestHandle = require('./test_handle');
 var traverse = require('traverse');
-var jquery = require('jquery');
+var stackedy = require('stackedy');
 
-var Test = module.exports = function (name, frameTarget) {
-    this.name = name;
-    this.windows = [];
-    this.running = true;
-    this.count = 0;
-    this.frameTarget = frameTarget;
-};
-
-Test.prototype = new EventEmitter;
-
-Test.prototype.createWindow = function (href, cb) {
-    if (typeof href === 'function') {
-        cb = href;
-        href = null;
-    }
+var Test = module.exports = function (name) {
+    var self = this;
+    self.source = require.modules['/_tests/' + name + '.js'].toString();
+    self.stackedy = stackedy(source, { filename : name + '.js' });
     
-    var frame = $('<iframe>')
-        .addClass('viewport')
-        .attr('src', href || 'about:blank')
-        .appendTo(this.frameTarget)
+    var box = self.box = jadeify('test.jade', {
+        name : name,
+        progress : jadeify('progress.jade'),
+        ok : 0,
+        fail : 0,
+    });
+    
+    box.ready(function () {
+        box.find('.title .refresh')
+            .mouseover(function () {
+                $(this).attr('src', 'images/refresh_hover.png');
+            })
+            .mouseout(function () {
+                $(this).attr('src', 'images/refresh.png');
+            })
+            .click(function (ev) {
+                ev.stopPropagation();
+                self.reload();
+            })
+        ;
+    });
+}
+
+Test.all = function () {
+    return Object.keys(require.modules)
+        .map(function (key) {
+            var m = key.match(/^\/tests\/[^\/]+$/);
+            return m && m[1];
+        })
+        .filter(Boolean)
+        .map(function (key) {
+            return new Test(name);
+        })
     ;
+};
+
+Test.prototype.run = function (context) {
+    var self = this;
+    if (!context) context = {};
+    if (!context.require) context.require = require;
     
-    var win = window[window.length - 1];
-    this.windows.push(win);
-    if (cb) {
-        var fn = function () {
-            process.nextTick(function () {
-                cb(win, function (x) {
-                    return arguments.length === 1
-                        ? jquery(x, win.document)
-                        : jquery.apply(null, arguments)
-                    ;
-                })
-            });
-        };
-        
-        $(win).load(fn);
-    }
+    var box = self.box;
+    var handle = self.handle = new TestHandle;
     
-    this.emit('window', win);
-    this.emit('frame', frame);
+    handle.on('ok', function () {
+        self.box.vars.ok ++;
+    });
     
-    return win;
-};
-
-Test.prototype.plan = function (n) {
-    this.planned = (this.planned || 0) + n;
-    this.emit('plan', n);
-};
-
-Test.prototype.end = function () {
-    if (this.running) {
-        this.running = false;
-        this.emit('end');
-    }
-};
-
-Test.prototype.fail = function (desc) {
-    if (!this.running) this.emit('fail() called after test ended');
-    this.emit('fail', null, null, new Error(desc));
-};
-
-Test.prototype.ok = function (cond, desc) {
-    this.equal(Boolean(cond), true, desc);
-};
-
-Test.prototype.equal = function (x, y, desc) {
-    this.count ++;
-    if (this.planned && this.count > this.planned) {
-        this.emit('fail', 'more tests run than planned');
-    }
-    else if (!this.running) {
-        this.emit('fail', 'equal() called after test ended');
-    }
-    else if (x == y) this.emit('ok', 'equal', x, y, desc);
-    else this.emit('fail', 'equal', x, y, desc);
+    handle.on('fail', function () {
+        self.box.vars.fail ++;
+    });
     
-    if (this.planned && this.count === this.planned) this.end();
+    return self.stackedy.run(context);
 };
 
-Test.prototype.notDeepEqual = function (x, y, desc) {
-    this.count ++;
-    if (this.planned && this.count > this.planned) {
-        this.emit('fail', 'more tests run than planned');
-    }
-    else if (!this.running) {
-        this.emit('fail', 'notDeepEqual() called after test ended');
-    }
-    else if (!traverse.deepEqual(x, y)) {
-        this.emit('ok', 'notDeepEqual', x, y, desc);
-    }
-    else {
-        this.emit('fail', 'notDeepEqual', x, y, desc);
-    }
-    
-    if (this.planned && this.count === this.planned) this.end();
-};
-
-Test.prototype.deepEqual = function (x, y, desc) {
-    this.count ++;
-    if (this.planned && this.count > this.planned) {
-        this.emit('fail', 'more tests run than planned');
-    }
-    else if (!this.running) {
-        this.emit('fail', 'deepEqual() called after test ended');
-    }
-    else if (traverse.deepEqual(x, y)) {
-        this.emit('ok', 'deepEqual', x, y, desc);
-    }
-    else {
-        this.emit('fail', 'deepEqual', x, y, desc);
-    }
-    
-    if (this.planned && this.count === this.planned) this.end();
+Test.prototype.stop = function () {
+    this.stackedy.stop();
 };
