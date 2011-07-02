@@ -75,7 +75,7 @@ Test.prototype.pass = function (ok) {
 
 Test.prototype.run = function (context) {
     var self = this;
-    self.running = true;
+    if (self.running) return self;
     
     if (!context) context = {};
     if (!context.require) context.require = require;
@@ -91,19 +91,20 @@ Test.prototype.run = function (context) {
         self.fail();
     });
     
-    return self.stackedy
-        .run(context)
-        .on('error', function (s) {
-            console.dir(s);
-            self.fail();
-        })
-    ;
+    self.running = self.stackedy.run(context);
+    self.running.on('error', function (s) {
+        if (self.box.vars.ok === 0 && self.box.vars.fail === 0) {
+            self.emit('end');
+        }
+        self.fail();
+    });
+    return self;
 };
 
 Test.prototype.stop = function () {
     if (this.running) {
-        this.stackedy.stop();
-        this.stackedy.removeAllListeners('error');
+        this.running.stop();
+        this.running.removeAllListeners('error');
         this.emit('end');
         this.running = false;
     }
@@ -116,6 +117,14 @@ Test.prototype.reset = function () {
         .removeClass('fail')
         .removeClass('all')
     ;
+    this.box.vars.fail = 0;
+    this.box.vars.ok = 0;
+    
+    var arrow = this.box.find('.title .arrow');
+    arrow.attr('src',
+        arrow.attr('src').replace(/(down|up)_fail\.png/, '$1.png')
+    );
+    
     this.stop();
     return this;
 };

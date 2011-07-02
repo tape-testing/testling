@@ -11,8 +11,9 @@ body {
 }
 
 #menu .logo {
-    margin-top: -40px;
-    margin-left: 35px;
+    position: absolute;
+    top: 15px;
+    left: 50px;
 }
 
 #browsers {
