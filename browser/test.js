@@ -23,7 +23,7 @@ var Test = module.exports = function (name) {
     var source = self.source =
         'var module = { exports : {} }; var exports = module.exports;\n'
         + testFiles[name]
-        + '\n' + self.names.exporter + '(module.exports)'
+        + '\n' + self.names.exporter + '(module)'
     ;
     
     self.stackedy = stackedy(source, { filename : name });
@@ -68,7 +68,7 @@ var Test = module.exports = function (name) {
         
         var more = box.find('.more');
         var arrow = box.find('.title .arrow');
-        box.toggle(
+        box.find('.title').toggle(
             function () {
                 more.slideDown(200, function () {
                     arrow.attr('src', arrow.attr('src')
@@ -103,10 +103,26 @@ Test.prototype.fail = function (err) {
         .addClass('fail')
     ;
     
-    var x = jadeify('assert/fail.jade', {
-        message : err.message || '',
-        desc : err.desc || '',
+    var elem = jadeify('assert/fail.jade', {
+        err : err,
+        lines : testFiles[this.name].split('\n'),
     }).appendTo(this.box.find('.more .asserts'));
+    
+    var div = elem.find('.lines');
+    var start = err.current.start;
+    
+    elem.toggle(
+        function () {
+            elem.find('.lines').slideDown(200, function () {
+                var pos = $(div.find('div').get(start.line - 1)).offset();
+                console.log(pos.left + ',' + pos.top);
+                div.scrollTop(pos.top);
+            });
+        },
+        function () {
+            elem.find('.lines').slideUp(200);
+        }
+    );
     
     var arrow = this.box.find('.title .arrow');
     arrow.attr(
@@ -138,15 +154,19 @@ Test.prototype.run = function (context) {
     if (!context) context = {};
     if (!context.require) context.require = require;
     
-    context[self.names.exporter] = function (exports) {
-        if (typeof context.module.exports !== 'object') {
+    context[self.names.exporter] = function (module) {
+        if (typeof module !== 'object') {
+            self.fail('module is not an object');
+        }
+        else if (typeof module.exports !== 'object') {
             self.fail('module.exports is not an object');
         }
-        
-        Object.keys(exports).forEach(function (key) {
-            var fn = exports[key];
-            fn(handle);
-        });
+        else {
+            Object.keys(exports).forEach(function (key) {
+                var fn = exports[key];
+                fn(handle);
+            });
+        }
     };
     
     var box = self.box;

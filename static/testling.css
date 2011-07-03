@@ -138,19 +138,28 @@ body {
     margin-bottom: 25px;
 }
 
-.asserts .assert {
+.assert {
     margin-bottom: 5px;
     padding: 5px;
+    cursor: pointer;
 }
 
-.asserts .assert img {
+.assert img {
     margin-right: 12px;
 }
 
-.asserts .ok {
+.assert .lines {
+    display: none;
+    height: 200px;
+    white-space: pre;
+    overflow-y: scroll;
+    overflow-x: auto;
+}
+
+.assert.ok {
     background-color: rgb(220,255,240);
 }
 
-.asserts .fail {
+.assert.fail {
     background-color: rgb(255,200,180);
 }
