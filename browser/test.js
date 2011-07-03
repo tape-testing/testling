@@ -12,6 +12,7 @@ var Test = module.exports = function (name) {
     if (!(this instanceof Test)) return new Test(name);
     
     var self = this;
+    
     self.name = name;
     self.running = false;
     
@@ -25,6 +26,17 @@ var Test = module.exports = function (name) {
         fail : 0,
     });
     
+    self.once('end', function () {
+        box.find('.button')
+            .unbind('click')
+            .click(function () {
+                self.reset();
+                self.run();
+            })
+            .attr('src', 'images/refresh.png')
+        ;
+    });
+    
     box.ready(function () {
         box.find('.title .refresh')
             .mouseover(function () {
@@ -35,9 +47,15 @@ var Test = module.exports = function (name) {
             })
             .click(function (ev) {
                 ev.stopPropagation();
-                self.reload();
+                self.reset();
+                self.run();
             })
         ;
+        
+        box.find('.button').click(function (ev) {
+            ev.stopPropagation();
+            self.run();
+        });
     });
 };
 
@@ -58,7 +76,8 @@ Test.prototype.fail = function (fail) {
     ;
     
     var arrow = this.box.find('.title .arrow');
-    arrow.attr('src',
+    arrow.attr(
+        'src',
         arrow.attr('src').replace(/(down|up)\.png/, '$1_fail.png')
     );
     
@@ -81,34 +100,61 @@ Test.prototype.run = function (context) {
     if (!context.require) context.require = require;
     
     var box = self.box;
-    var handle = self.handle = new TestHandle;
+    box.find('.button')
+        .unbind('click')
+        .click(function (ev) {
+            ev.stopPropagation();
+            self.stop();
+        })
+        .one('load', function () {
+            var handle = self.handle = new TestHandle;
+            
+            handle.on('ok', function () {
+                self.pass();
+            });
+            
+            handle.on('fail', function () {
+                self.fail();
+            });
+            
+            self.running = self.stackedy.run(context);
+            self.running.on('error', function (s) {
+                if (box.vars.ok === 0 && box.vars.fail === 0) {
+                    if (s.original.type === 'not_defined') {
+                        self.emit('end');
+                    }
+                }
+                self.fail(s);
+            });
+        })
+        .attr('src', 'images/stop.png')
+    ;
     
-    handle.on('ok', function () {
-        self.pass();
-    });
-    
-    handle.on('fail', function () {
-        self.fail();
-    });
-    
-    self.running = self.stackedy.run(context);
-    self.running.on('error', function (s) {
-        if (self.box.vars.ok === 0 && self.box.vars.fail === 0) {
-            self.emit('end');
-        }
-        self.fail();
-    });
     return self;
 };
 
 Test.prototype.stop = function () {
-    if (this.running) {
-        this.running.stop();
-        this.running.removeAllListeners('error');
-        this.emit('end');
-        this.running = false;
-    }
-    return this;
+    var self = this;
+    
+    self.box.find('.button')
+        .unbind('click')
+        .click(function (ev) {
+            ev.stopPropagation();
+            self.reset();
+            self.run();
+        })
+        .one('load', function () {
+            if (self.running) {
+                self.running.stop();
+                self.running.removeAllListeners('error');
+                self.running = null;
+                
+                self.emit('end');
+            }
+        })
+        .attr('src', 'images/refresh.png')
+    ;
+    return self;
 };
 
 Test.prototype.reset = function () {
@@ -117,11 +163,14 @@ Test.prototype.reset = function () {
         .removeClass('fail')
         .removeClass('all')
     ;
+    this.box.find('.button').attr('src', 'images/play.png');
+    
     this.box.vars.fail = 0;
     this.box.vars.ok = 0;
     
     var arrow = this.box.find('.title .arrow');
-    arrow.attr('src',
+    arrow.attr(
+        'src',
         arrow.attr('src').replace(/(down|up)_fail\.png/, '$1.png')
     );
     
