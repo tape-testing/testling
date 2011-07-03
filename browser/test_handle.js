@@ -2,8 +2,7 @@ var EventEmitter = require('events').EventEmitter;
 var traverse = require('traverse');
 var jquery = require('jquery');
 
-var Test = module.exports = function (name, frameTarget) {
-    this.name = name;
+var Test = module.exports = function (frameTarget) {
     this.windows = [];
     this.running = true;
     this.count = 0;

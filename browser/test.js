@@ -111,12 +111,14 @@ Test.prototype.fail = function (err) {
     var div = elem.find('.lines');
     var start = err.current.start;
     
+    var line = $(div.find('div').get(start.line - 1));
+    line.addClass('selected');
+    
     elem.toggle(
         function () {
             elem.find('.lines').slideDown(200, function () {
-                var pos = $(div.find('div').get(start.line - 1)).offset();
-                console.log(pos.left + ',' + pos.top);
-                div.scrollTop(pos.top);
+                var pos = line.offset();
+                if (pos) div.scrollTop(pos.top);
             });
         },
         function () {
@@ -162,9 +164,19 @@ Test.prototype.run = function (context) {
             self.fail('module.exports is not an object');
         }
         else {
-            Object.keys(exports).forEach(function (key) {
-                var fn = exports[key];
-                fn(handle);
+            Object.keys(module.exports).forEach(function (key) {
+                var handle = new TestHandle(box.find('.more'));
+                
+                handle.on('ok', function (ok) {
+                    self.pass(ok);
+                });
+                
+                handle.on('fail', function () {
+                    self.fail();
+                });
+                
+                var fn = module.exports[key];
+                if (typeof fn === 'function') fn(handle);
             });
         }
     };
@@ -177,16 +189,6 @@ Test.prototype.run = function (context) {
             self.stop();
         })
         .one('load', function () {
-            var handle = self.handle = new TestHandle;
-            
-            handle.on('ok', function () {
-                self.pass();
-            });
-            
-            handle.on('fail', function () {
-                self.fail();
-            });
-            
             self.running = self.stackedy.run(context);
             self.running.on('error', function (err) {
                 self.fail(err);

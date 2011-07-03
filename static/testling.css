@@ -156,6 +156,10 @@ body {
     overflow-x: auto;
 }
 
+.lines .line.selected {
+    background-color: rgb(250,120,100);
+}
+
 .assert.ok {
     background-color: rgb(220,255,240);
 }
