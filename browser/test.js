@@ -4,6 +4,7 @@ var EventEmitter = require('events').EventEmitter;
 
 var traverse = require('traverse');
 var stackedy = require('stackedy');
+var burrito = require('burrito');
 
 var TestHandle = require('./test_handle');
 var testFiles = (require)('test_files');
@@ -16,10 +17,18 @@ var Test = module.exports = function (name) {
     self.name = name;
     self.running = false;
     
-    var source = self.source = testFiles[name];
+    self.names = {};
+    self.names.exporter = burrito.generateName(6);
+    
+    var source = self.source =
+        'var module = { exports : {} }; var exports = module.exports;\n'
+        + testFiles[name]
+        + '\n' + self.names.exporter + '(module.exports)'
+    ;
+    
     self.stackedy = stackedy(source, { filename : name });
     
-    var box = self.box = jadeify('test.jade', {
+    var box = self.box = jadeify('box.jade', {
         name : name,
         progress : jadeify('progress.jade'),
         ok : 0,
@@ -56,6 +65,25 @@ var Test = module.exports = function (name) {
             ev.stopPropagation();
             self.run();
         });
+        
+        var more = box.find('.more');
+        var arrow = box.find('.title .arrow');
+        box.toggle(
+            function () {
+                more.slideDown(200, function () {
+                    arrow.attr('src', arrow.attr('src')
+                        .replace(/down((?:_fail)?\.png)$/, 'up$1')
+                    );
+                });
+            },
+            function () {
+                more.slideUp(200, function () {
+                    arrow.attr('src', arrow.attr('src')
+                        .replace(/up((?:_fail)?\.png)$/, 'down$1')
+                    );
+                });
+            }
+        );
     });
 };
 
@@ -69,11 +97,16 @@ Test.all = function () {
     ;
 };
 
-Test.prototype.fail = function (fail) {
+Test.prototype.fail = function (err) {
     this.box
         .removeClass('ok')
         .addClass('fail')
     ;
+    
+    var x = jadeify('assert/fail.jade', {
+        message : err.message || '',
+        desc : err.desc || '',
+    }).appendTo(this.box.find('.more .asserts'));
     
     var arrow = this.box.find('.title .arrow');
     arrow.attr(
@@ -89,6 +122,12 @@ Test.prototype.pass = function (ok) {
         .removeClass('ok')
         .addClass('fail')
     ;
+    
+    jadeify('assert/ok.jade', {
+        cmp : ok.cmp || '',
+        desc : ok.desc || ''
+    }).appendTo(this.box.find('.more .asserts'));
+    
     this.box.vars.ok ++;
 };
 
@@ -98,6 +137,17 @@ Test.prototype.run = function (context) {
     
     if (!context) context = {};
     if (!context.require) context.require = require;
+    
+    context[self.names.exporter] = function (exports) {
+        if (typeof context.module.exports !== 'object') {
+            self.fail('module.exports is not an object');
+        }
+        
+        Object.keys(exports).forEach(function (key) {
+            var fn = exports[key];
+            fn(handle);
+        });
+    };
     
     var box = self.box;
     box.find('.button')
@@ -118,13 +168,8 @@ Test.prototype.run = function (context) {
             });
             
             self.running = self.stackedy.run(context);
-            self.running.on('error', function (s) {
-                if (box.vars.ok === 0 && box.vars.fail === 0) {
-                    if (s.original.type === 'not_defined') {
-                        self.emit('end');
-                    }
-                }
-                self.fail(s);
+            self.running.on('error', function (err) {
+                self.fail(err);
             });
         })
         .attr('src', 'images/stop.png')
@@ -164,6 +209,7 @@ Test.prototype.reset = function () {
         .removeClass('all')
     ;
     this.box.find('.button').attr('src', 'images/play.png');
+    this.box.find('.asserts').empty();
     
     this.box.vars.fail = 0;
     this.box.vars.ok = 0;
