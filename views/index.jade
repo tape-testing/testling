@@ -4,7 +4,7 @@ html
     title testling v#{version}
     base(href=mount+'/')
     link(rel='stylesheet', href='testling.css')
-    script(type='text/javascript', src='browserify.js')
+    script(type='text/javascript', src='browserify.js?' + modified)
   body
     div#menu
       img#all.button(src='images/play.png', alt='play all', title='play all')

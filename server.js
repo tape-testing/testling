@@ -48,6 +48,7 @@ app.get(argv.mount, function (req, res) {
     res.render('index.jade', {
         layout : false,
         version : version,
+        modified : bundle.modified.getTime(),
     });
 });
 
