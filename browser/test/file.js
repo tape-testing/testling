@@ -5,6 +5,7 @@ var EventEmitter = require('events').EventEmitter;
 var traverse = require('traverse');
 var stackedy = require('stackedy');
 var burrito = require('burrito');
+var progressify = require('progressify');
 
 var Handle = require('./handle');
 var testFiles = (require)('test_files');
@@ -28,9 +29,11 @@ var File = module.exports = function (name) {
     
     self.stackedy = stackedy(source, { filename : name });
     
+    var progress = progressify({ mount : '.' });
+    
     var box = self.box = jadeify('box/file.jade', {
         name : name,
-        progress : jadeify('progress.jade'),
+        progress : progress.element,
         ok : 0,
         fail : 0,
     });

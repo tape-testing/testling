@@ -22,6 +22,7 @@ var express = require('express');
 
 var app = express.createServer();
 app.use(argv.mount, express.static(__dirname + '/static'));
+app.use(argv.mount, require('progressify'));
 
 var jadeify = require('jadeify');
 var fileify = require('fileify');
