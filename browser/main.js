@@ -1,6 +1,6 @@
 var $ = require('jquery');
 var jadeify = require('jadeify');
-var Test = require('./test');
+var TestFile = require('./test/file');
 
 var path = require('path');
 
@@ -14,7 +14,7 @@ $(window).ready(function reload () {
         var browser = path.basename(src).replace(/\.[^.\/]+$/, '');
     });
     
-    var tests = Test.all();
+    var tests = TestFile.all();
     
     tests.forEach(function (t) {
         t.box.appendTo('#tests');

@@ -6,11 +6,11 @@ var traverse = require('traverse');
 var stackedy = require('stackedy');
 var burrito = require('burrito');
 
-var TestHandle = require('./handle');
+var Handle = require('./handle');
 var testFiles = (require)('test_files');
 
-var Test = module.exports = function (name) {
-    if (!(this instanceof Test)) return new Test(name);
+var File = module.exports = function (name) {
+    if (!(this instanceof File)) return new File(name);
     
     var self = this;
     
@@ -28,7 +28,7 @@ var Test = module.exports = function (name) {
     
     self.stackedy = stackedy(source, { filename : name });
     
-    var box = self.box = jadeify('box.jade', {
+    var box = self.box = jadeify('box/file.jade', {
         name : name,
         progress : jadeify('progress.jade'),
         ok : 0,
@@ -87,17 +87,17 @@ var Test = module.exports = function (name) {
     });
 };
 
-Test.prototype = new EventEmitter;
+File.prototype = new EventEmitter;
 
-Test.all = function () {
+File.all = function () {
     return Object.keys(testFiles)
         .map(function (name) {
-            return new Test(name);
+            return new File(name);
         })
     ;
 };
 
-Test.prototype.fail = function (err) {
+File.prototype.fail = function (err) {
     this.box
         .removeClass('ok')
         .addClass('fail')
@@ -135,7 +135,7 @@ Test.prototype.fail = function (err) {
     this.box.vars.fail ++;
 };
 
-Test.prototype.pass = function (ok) {
+File.prototype.pass = function (ok) {
     this.box
         .removeClass('ok')
         .addClass('fail')
@@ -149,7 +149,7 @@ Test.prototype.pass = function (ok) {
     this.box.vars.ok ++;
 };
 
-Test.prototype.run = function (context) {
+File.prototype.run = function (context) {
     var self = this;
     if (self.running) return self;
     
@@ -200,7 +200,7 @@ Test.prototype.run = function (context) {
     return self;
 };
 
-Test.prototype.stop = function () {
+File.prototype.stop = function () {
     var self = this;
     
     self.box.find('.button')
@@ -224,7 +224,7 @@ Test.prototype.stop = function () {
     return self;
 };
 
-Test.prototype.reset = function () {
+File.prototype.reset = function () {
     this.box
         .removeClass('ok')
         .removeClass('fail')
