@@ -6,7 +6,7 @@ var traverse = require('traverse');
 var stackedy = require('stackedy');
 var burrito = require('burrito');
 
-var TestHandle = require('./test_handle');
+var TestHandle = require('./handle');
 var testFiles = (require)('test_files');
 
 var Test = module.exports = function (name) {
