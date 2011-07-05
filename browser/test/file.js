@@ -101,34 +101,12 @@ File.all = function () {
 };
 
 File.prototype.fail = function (err) {
-console.log('fail!');
     this.box
         .removeClass('ok')
         .addClass('fail')
     ;
     
-    var elem = jadeify('assert/fail.jade', {
-        err : err,
-        lines : testFiles[this.name].split('\n'),
-    }).appendTo(this.box.find('.more .asserts'));
-    
-    var div = elem.find('.lines');
-    var start = err.current.start;
-    
-    var line = $(div.find('div').get(start.line - 1));
-    line.addClass('selected');
-    
-    elem.toggle(
-        function () {
-            elem.find('.lines').slideDown(200, function () {
-                var pos = line.offset();
-                if (pos) div.scrollTop(pos.top);
-            });
-        },
-        function () {
-            elem.find('.lines').slideUp(200);
-        }
-    );
+    this.box.vars.fail ++;
     
     var arrow = this.box.find('.title .arrow');
     arrow.attr(
@@ -136,7 +114,38 @@ console.log('fail!');
         arrow.attr('src').replace(/(down|up)\.png/, '$1_fail.png')
     );
     
-    this.box.vars.fail ++;
+    if (typeof err === 'string') {
+        err = {
+            message : err,
+            desc : '',
+            current : self.running.current
+        };
+    }
+    
+    if (err) {
+        var elem = jadeify('assert/fail.jade', {
+            err : err,
+            lines : testFiles[this.name].split('\n'),
+        }).appendTo(this.box.find('.more .asserts'));
+        
+        var div = elem.find('.lines');
+        var start = err.current.start;
+        
+        var line = $(div.find('div').get(start.line - 1));
+        line.addClass('selected');
+        
+        elem.toggle(
+            function () {
+                elem.find('.lines').slideDown(200, function () {
+                    var pos = line.offset();
+                    if (pos) div.scrollTop(pos.top);
+                });
+            },
+            function () {
+                elem.find('.lines').slideUp(200);
+            }
+        );
+    }
 };
 
 File.prototype.pass = function (ok) {
