@@ -137,8 +137,10 @@ File.prototype.fail = function (err) {
         elem.toggle(
             function () {
                 elem.find('.lines').slideDown(200, function () {
-                    var pos = line.offset();
-                    if (pos) div.scrollTop(pos.top);
+                    if (line.offset()) {
+                        var jump = line.offset().top - div.offset().top;
+                        div.scrollTop(jump - div.height() / 2);
+                    }
                 });
             },
             function () {
@@ -148,17 +150,8 @@ File.prototype.fail = function (err) {
     }
 };
 
-File.prototype.pass = function (ok) {
-    this.box
-        .removeClass('ok')
-        .addClass('fail')
-    ;
-    
-    jadeify('assert/ok.jade', {
-        cmp : ok.cmp || '',
-        desc : ok.desc || ''
-    }).appendTo(this.box.find('.more .asserts'));
-    
+File.prototype.ok = function (ok) {
+    this.box.addClass('ok');
     this.box.vars.ok ++;
 };
 
@@ -182,13 +175,14 @@ File.prototype.run = function (context) {
                 if (typeof fn !== 'function') return;
                 
                 var t = new Fn(self.name, name, fn);
-                t.appendTo(box.find('.more'));
+                t.appendTo(box.find('.more .functions'));
                 
                 t.on('ok', function () {
-                    
+                    self.ok();
                 });
                 
                 t.on('fail', function () {
+                    self.fail();
                 });
             });
         }

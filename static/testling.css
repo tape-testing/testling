@@ -107,6 +107,10 @@ body {
     border-color: rgb(255,100,100);
 }
 
+.test.fn {
+    margin-left: 30px;
+}
+
 .asserts {
     padding-left: 20px;
     margin-bottom: 25px;
@@ -124,13 +128,24 @@ body {
 
 .assert .lines {
     display: none;
+    background-color: rgb(255,240,220);
+    margin-top: 10px;
     height: 200px;
     white-space: pre;
     overflow-y: scroll;
     overflow-x: auto;
 }
 
-.lines .line.selected {
+.line-num {
+    display: inline-block;
+    width: 30px;
+    text-align: right;
+    margin-right: 10px;
+    padding-right: 5px;
+    border-right: 2px solid rgb(250,120,100);
+}
+
+.selected {
     background-color: rgb(250,120,100);
 }
 

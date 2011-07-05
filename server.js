@@ -5,7 +5,7 @@ var argv = require('optimist')
         desc : 'Prefix to mount testling routes at',
         default : '/testling',
     })
-    .default('port', 8080)
+    .default('port', 8082)
     .argv
 ;
 var fs = require('fs');

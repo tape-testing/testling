@@ -11,6 +11,8 @@ exports.fast = function (t) {
     }, 250);
 };
 
+undefined.key;
+
 exports.slow = function (t) {
     t.plan(10);
     
