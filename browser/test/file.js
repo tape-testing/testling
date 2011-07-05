@@ -7,7 +7,7 @@ var stackedy = require('stackedy');
 var burrito = require('burrito');
 var progressify = require('progressify');
 
-var Handle = require('./handle');
+var Fn = require('./fn');
 var testFiles = (require)('test_files');
 
 var File = module.exports = function (name) {
@@ -29,11 +29,11 @@ var File = module.exports = function (name) {
     
     self.stackedy = stackedy(source, { filename : name });
     
-    var progress = progressify({ mount : '.' });
+    self.progress = progressify({ mount : '.' });
     
     var box = self.box = jadeify('box/file.jade', {
         name : name,
-        progress : progress.element,
+        progress : self.progress.element,
         ok : 0,
         fail : 0,
     });
@@ -101,6 +101,7 @@ File.all = function () {
 };
 
 File.prototype.fail = function (err) {
+console.log('fail!');
     this.box
         .removeClass('ok')
         .addClass('fail')
@@ -167,19 +168,19 @@ File.prototype.run = function (context) {
             self.fail('module.exports is not an object');
         }
         else {
-            Object.keys(module.exports).forEach(function (key) {
-                var handle = new TestHandle(box.find('.more'));
+            Object.keys(module.exports).forEach(function (name) {
+                var fn = module.exports[name];
+                if (typeof fn !== 'function') return;
                 
-                handle.on('ok', function (ok) {
-                    self.pass(ok);
+                var t = new Fn(self.name, name, fn);
+                t.appendTo(box.find('.more'));
+                
+                t.on('ok', function () {
+                    
                 });
                 
-                handle.on('fail', function () {
-                    self.fail();
+                t.on('fail', function () {
                 });
-                
-                var fn = module.exports[key];
-                if (typeof fn === 'function') fn(handle);
             });
         }
     };

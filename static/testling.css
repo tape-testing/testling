@@ -75,6 +75,7 @@ body {
     margin-right: 5px;
     height: 40px;
     width: 200px;
+    display: inline;
 }
 
 .test .title .button {
@@ -84,33 +85,6 @@ body {
 
 .test .title .button:hover {
     cursor: pointer;
-}
-
-.test .title .progress {
-    display: inline;
-}
-
-.test .title .progress .finished {
-    position: absolute;
-    overflow-x: hidden;
-    width: 0px;
-    z-index: 1;
-}
-
-.test .title .progress .percent {
-    position: absolute;
-    width: 150px;
-    font-weight: bold;
-    z-index: 10;
-    text-align: center;
-    margin-top: 8px;
-}
-
-.test .title .progress div img {
-    height: 100%;
-}
-
-.test .title .progress .remaining {
 }
 
 .test .more {
