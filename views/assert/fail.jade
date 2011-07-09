@@ -5,7 +5,7 @@ div.fail.assert
   div.desc #{err.desc}
   div.lines
     - lines.forEach(function (line, i) {
-      div
+      div.line
         div.line-num #{i}
         | #{line}
     - })

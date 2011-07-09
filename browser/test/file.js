@@ -33,9 +33,7 @@ var File = module.exports = function (name) {
     
     var box = self.box = jadeify('box/file.jade', {
         name : name,
-        progress : self.progress.element,
-        ok : 0,
-        fail : 0,
+        progress : self.progress.element
     });
     
     self.once('end', function () {
@@ -106,7 +104,9 @@ File.prototype.fail = function (err) {
         .addClass('fail')
     ;
     
-    this.box.vars.fail ++;
+    this.box.find('.fail').text(
+        parseInt(this.box.find('.fail').text(), 10) + 1
+    );
     
     var arrow = this.box.find('.title .arrow');
     arrow.attr(
@@ -118,20 +118,20 @@ File.prototype.fail = function (err) {
         err = {
             message : err,
             desc : '',
-            current : self.running.current
+            current : this.running.current
         };
     }
     
     if (err) {
         var elem = jadeify('assert/fail.jade', {
             err : err,
-            lines : testFiles[this.name].split('\n'),
+            lines : testFiles[this.name].split('\n')
         }).appendTo(this.box.find('.more .asserts'));
         
         var div = elem.find('.lines');
         var start = err.current.start;
         
-        var line = $(div.find('div').get(start.line - 1));
+        var line = $(div.find('.line').get(start.line - 1));
         line.addClass('selected');
         
         elem.toggle(
@@ -152,7 +152,9 @@ File.prototype.fail = function (err) {
 
 File.prototype.ok = function (ok) {
     this.box.addClass('ok');
-    this.box.vars.ok ++;
+    this.box.find('.ok').text(
+        parseInt(this.box.find('.ok').text(), 10) + 1
+    );
 };
 
 File.prototype.run = function (context) {
@@ -240,8 +242,8 @@ File.prototype.reset = function () {
     this.box.find('.button').attr('src', 'images/play.png');
     this.box.find('.asserts').empty();
     
-    this.box.vars.fail = 0;
-    this.box.vars.ok = 0;
+    this.box.find('.fail').text(0);
+    this.box.find('.ok').text(0);
     
     var arrow = this.box.find('.title .arrow');
     arrow.attr(

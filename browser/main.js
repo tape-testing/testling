@@ -1,5 +1,4 @@
 var $ = require('jquery');
-var jadeify = require('jadeify');
 var TestFile = require('./test/file');
 
 var path = require('path');
