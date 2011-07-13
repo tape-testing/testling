@@ -58,9 +58,13 @@ Test.prototype.end = function () {
     }
 };
 
-Test.prototype.fail = function (desc) {
-    if (!this.running) this.emit('fail() called after test ended');
-    this.emit('fail', null, null, new Error(desc));
+Test.prototype.fail = function (err) {
+    if (!this.running) {
+        this.emit('fail', {
+            message : 'fail() called after test ended'
+        })
+    }
+    else this.emit('fail', err)
 };
 
 Test.prototype.ok = function (cond, desc) {
@@ -70,13 +74,19 @@ Test.prototype.ok = function (cond, desc) {
 Test.prototype.equal = function (x, y, desc) {
     this.count ++;
     if (this.planned && this.count > this.planned) {
-        this.emit('fail', 'more tests run than planned');
+        this.emit('fail', {
+            message : 'more tests run than planned'
+        });
     }
     else if (!this.running) {
-        this.emit('fail', 'equal() called after test ended');
+        this.emit('fail', {
+            message : 'equal() called after test ended'
+        });
     }
     else if (x == y) this.emit('ok', 'equal', x, y, desc);
-    else this.emit('fail', 'equal', x, y, desc);
+    else this.emit('fail', {
+        message : JSON.stringify(x) + ' != ' + JSON.stringify(y)
+    });
     
     if (this.planned && this.count === this.planned) this.end();
 };
@@ -84,16 +94,26 @@ Test.prototype.equal = function (x, y, desc) {
 Test.prototype.notDeepEqual = function (x, y, desc) {
     this.count ++;
     if (this.planned && this.count > this.planned) {
-        this.emit('fail', 'more tests run than planned');
+        this.emit('fail', {
+            message : 'more tests run than planned'
+        });
     }
     else if (!this.running) {
-        this.emit('fail', 'notDeepEqual() called after test ended');
+        this.emit('fail', {
+            message : 'notDeepEqual() called after test ended'
+        });
     }
     else if (!traverse.deepEqual(x, y)) {
-        this.emit('ok', 'notDeepEqual', x, y, desc);
+        this.emit('ok', {
+            message : JSON.stringify(x) + ' notDeepEqual ' + JSON.stringify(y),
+            desc : desc
+        });
     }
     else {
-        this.emit('fail', 'notDeepEqual', x, y, desc);
+        this.emit('fail', {
+            message : JSON.stringify(x) + ' notDeepEqual ' + JSON.stringify(y),
+            desc : desc
+        });
     }
     
     if (this.planned && this.count === this.planned) this.end();
@@ -102,16 +122,27 @@ Test.prototype.notDeepEqual = function (x, y, desc) {
 Test.prototype.deepEqual = function (x, y, desc) {
     this.count ++;
     if (this.planned && this.count > this.planned) {
-        this.emit('fail', 'more tests run than planned');
+        this.emit('fail', {
+            message : 'more tests run than planned',
+            desc : desc
+        });
     }
     else if (!this.running) {
-        this.emit('fail', 'deepEqual() called after test ended');
+        this.emit('fail', {
+            message : 'deepEqual() called after test ended'
+        });
     }
     else if (traverse.deepEqual(x, y)) {
-        this.emit('ok', 'deepEqual', x, y, desc);
+        this.emit('ok', {
+            message : JSON.stringify(x) + ' deepEqual ' + JSON.stringify(y),
+            desc : desc
+        });
     }
     else {
-        this.emit('fail', 'deepEqual', x, y, desc);
+        this.emit('fail', {
+            message : JSON.stringify(x) + ' deepEqual ' + JSON.stringify(y),
+            desc : desc
+        });
     }
     
     if (this.planned && this.count === this.planned) this.end();

@@ -2,7 +2,9 @@ div.fail.assert
   div
     img(src='images/fail.png')
     span #{err.message}
-  div.desc #{err.desc}
+  - if (err.desc) {
+    div.desc #{err.desc}
+  - }
   div.lines
     - lines.forEach(function (line, i) {
       div.line

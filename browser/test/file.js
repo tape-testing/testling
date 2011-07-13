@@ -104,8 +104,8 @@ File.prototype.fail = function (err) {
         .addClass('fail')
     ;
     
-    this.box.find('.fail').text(
-        parseInt(this.box.find('.fail').text(), 10) + 1
+    this.box.find('.fail-count').text(
+        parseInt(this.box.find('.fail-count').text(), 10) + 1
     );
     
     var arrow = this.box.find('.title .arrow');
@@ -152,8 +152,8 @@ File.prototype.fail = function (err) {
 
 File.prototype.ok = function (ok) {
     this.box.addClass('ok');
-    this.box.find('.ok').text(
-        parseInt(this.box.find('.ok').text(), 10) + 1
+    this.box.find('.ok-count').text(
+        parseInt(this.box.find('.ok-count').text(), 10) + 1
     );
 };
 
@@ -176,7 +176,7 @@ File.prototype.run = function (context) {
                 var fn = module.exports[name];
                 if (typeof fn !== 'function') return;
                 
-                var t = new Fn(self.name, name, fn);
+                var t = new Fn(self, name, fn);
                 t.appendTo(box.find('.more .functions'));
                 
                 t.on('ok', function () {
@@ -244,8 +244,8 @@ File.prototype.reset = function () {
     this.box.find('.button').attr('src', 'images/play.png');
     this.box.find('.asserts').empty();
     
-    this.box.find('.fail').text(0);
-    this.box.find('.ok').text(0);
+    this.box.find('.fail-count').text(0);
+    this.box.find('.ok-count').text(0);
     
     var arrow = this.box.find('.title .arrow');
     arrow.attr(
