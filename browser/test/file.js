@@ -186,6 +186,8 @@ File.prototype.run = function (context) {
                 t.on('fail', function () {
                     self.fail();
                 });
+                
+                t.run();
             });
         }
     };
