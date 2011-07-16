@@ -234,7 +234,7 @@ File.prototype.reset = function () {
         .removeClass('all')
     ;
     this.box.find('.button').attr('src', 'images/play.png');
-    this.box.find('.asserts').empty();
+    this.box.find('.functions').empty();
     
     this.box.find('.fail-count').text(0);
     this.box.find('.ok-count').text(0);
