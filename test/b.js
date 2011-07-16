@@ -19,6 +19,7 @@ exports.naive = function (t) {
     d.push(c);
     
     t.deepEqual(b, d);
+    t.ok(true);
 };
 
 exports.cmp = function (t) {

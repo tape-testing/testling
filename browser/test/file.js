@@ -158,10 +158,14 @@ File.prototype.run = function (context) {
     
     context[self.names.exporter] = function (module) {
         if (typeof module !== 'object') {
-            self.fail('module is not an object');
+            self.fail({
+                message : 'module is not an object'
+            });
         }
         else if (typeof module.exports !== 'object') {
-            self.fail('module.exports is not an object');
+            self.fail({
+                message : 'module.exports is not an object'
+            });
         }
         else {
             Object.keys(module.exports).forEach(function (name) {
@@ -171,15 +175,22 @@ File.prototype.run = function (context) {
                 var t = new Fn(self, name, fn);
                 t.appendTo(box.find('.more .functions'));
                 
-                t.on('ok', function () {
-                    self.ok();
-                });
+                var listeners = {
+                    ok : function (ok) {
+                        self.ok(ok);
+                    },
+                    fail : function (err) {
+                        self.fail(err);
+                    }
+                };
                 
-                t.on('fail', function () {
-                    self.fail();
-                });
+                t.on('fail', listeners.fail);
+                t.on('ok', listeners.ok);
                 
                 t.run();
+                
+                t.removeListener('fail', listeners.fail);
+                t.removeListener('ok', listeners.ok);
             });
         }
     };
