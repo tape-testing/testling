@@ -1,6 +1,7 @@
 var EventEmitter = require('events').EventEmitter;
 var traverse = require('traverse');
 var jquery = require('jquery');
+var stringify = require('./stringify');
 
 var Test = module.exports = function (frameTarget) {
     this.windows = [];
@@ -85,7 +86,8 @@ Test.prototype.equal = function (x, y, desc) {
     }
     else if (x == y) this.emit('ok', 'equal', x, y, desc);
     else this.emit('fail', {
-        message : JSON.stringify(x) + ' != ' + JSON.stringify(y)
+        message : stringify(x) + ' != ' + stringify(y),
+        desc : desc
     });
     
     if (this.planned && this.count === this.planned) this.end();
@@ -105,13 +107,13 @@ Test.prototype.notDeepEqual = function (x, y, desc) {
     }
     else if (!traverse.deepEqual(x, y)) {
         this.emit('ok', {
-            message : JSON.stringify(x) + ' notDeepEqual ' + JSON.stringify(y),
+            message : stringify(x) + ' notDeepEqual ' + stringify(y),
             desc : desc
         });
     }
     else {
         this.emit('fail', {
-            message : JSON.stringify(x) + ' notDeepEqual ' + JSON.stringify(y),
+            message : stringify(x) + ' notDeepEqual ' + stringify(y),
             desc : desc
         });
     }
@@ -134,13 +136,13 @@ Test.prototype.deepEqual = function (x, y, desc) {
     }
     else if (traverse.deepEqual(x, y)) {
         this.emit('ok', {
-            message : JSON.stringify(x) + ' deepEqual ' + JSON.stringify(y),
+            message : stringify(x) + ' deepEqual ' + stringify(y),
             desc : desc
         });
     }
     else {
         this.emit('fail', {
-            message : JSON.stringify(x) + ' deepEqual ' + JSON.stringify(y),
+            message : stringify(x) + ' deepEqual ' + stringify(y),
             desc : desc
         });
     }

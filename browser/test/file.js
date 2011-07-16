@@ -69,7 +69,7 @@ var File = module.exports = function (name) {
         
         var more = box.find('.more');
         var arrow = box.find('.title .arrow');
-        box.find('.title').toggle(
+        box.find('.title:first').toggle(
             function () {
                 more.slideDown(200, function () {
                     arrow.attr('src', arrow.attr('src')
@@ -114,19 +114,11 @@ File.prototype.fail = function (err) {
         arrow.attr('src').replace(/(down|up)\.png/, '$1_fail.png')
     );
     
-    if (typeof err === 'string') {
-        err = {
-            message : err,
-            desc : '',
-            current : this.running.current
-        };
-    }
-    
     if (err) {
         var elem = jadeify('assert/fail.jade', {
             err : err,
             lines : testFiles[this.name].split('\n')
-        }).appendTo(this.box.find('.more .asserts'));
+        }).appendTo(this.box.first('.more .asserts'));
         
         var div = elem.find('.lines');
         var start = err.current.start;
