@@ -118,7 +118,15 @@ File.prototype.fail = function (err) {
         var elem = jadeify('assert/fail.jade', {
             err : err,
             lines : testFiles[this.name].split('\n')
-        }).appendTo(this.box.find('.more:first .asserts'));
+        });
+        
+        var fn = err.stack[0];
+        if (fn) {
+            elem.appendTo(fn.element.find('.more .asserts'));
+        }
+        else {
+            elem.appendTo(this.box.find('.more .asserts:first'));
+        }
         
         var div = elem.find('.lines');
         var start = err.current.start;
@@ -177,22 +185,9 @@ File.prototype.run = function (context) {
                 var t = new Fn(self, name, fn);
                 t.appendTo(box.find('.more .functions'));
                 
-                var listeners = {
-                    ok : function (ok) {
-                        self.ok(ok);
-                    },
-                    fail : function (err) {
-                        self.fail(err);
-                    }
-                };
-                
-                t.on('fail', listeners.fail);
-                t.on('ok', listeners.ok);
-                
+                self.running.stack.unshift(t);
                 t.run();
-                
-                t.removeListener('fail', listeners.fail);
-                t.removeListener('ok', listeners.ok);
+                self.running.stack.shift();
             });
         }
     };
@@ -231,7 +226,6 @@ File.prototype.stop = function () {
                 self.running.stop();
                 self.running.removeAllListeners('error');
                 self.running = null;
-                
                 self.emit('end');
             }
         })
