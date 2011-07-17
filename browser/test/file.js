@@ -118,15 +118,15 @@ File.prototype.fail = function (err) {
         var elem = jadeify('assert/fail.jade', {
             err : err,
             lines : testFiles[this.name].split('\n')
-        }).appendTo(this.box.first('.more .asserts'));
+        }).appendTo(this.box.find('.more:first .asserts'));
         
-        var div = elem.first('.lines');
+        var div = elem.find('.lines');
         var start = err.current.start;
         
         var line = $(div.find('.line').get(start.line - 1));
         line.addClass('selected');
         
-        elem.first('.title').click(function (ev) {
+        elem.find('.overview').click(function (ev) {
             ev.stopPropagation();
             
             if (div.is(':hidden')) {
