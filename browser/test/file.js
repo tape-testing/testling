@@ -120,25 +120,27 @@ File.prototype.fail = function (err) {
             lines : testFiles[this.name].split('\n')
         }).appendTo(this.box.first('.more .asserts'));
         
-        var div = elem.find('.lines');
+        var div = elem.first('.lines');
         var start = err.current.start;
         
         var line = $(div.find('.line').get(start.line - 1));
         line.addClass('selected');
         
-        elem.toggle(
-            function () {
-                elem.find('.lines').slideDown(200, function () {
+        elem.first('.title').click(function (ev) {
+            ev.stopPropagation();
+            
+            if (div.is(':hidden')) {
+                div.slideDown(200, function () {
                     if (line.offset()) {
                         var jump = line.offset().top - div.offset().top;
                         div.scrollTop(jump - div.height() / 2);
                     }
                 });
-            },
-            function () {
-                elem.find('.lines').slideUp(200);
             }
-        );
+            else {
+                div.slideUp(200);
+            }
+        });
     }
 };
 

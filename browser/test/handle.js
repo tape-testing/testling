@@ -3,11 +3,12 @@ var traverse = require('traverse');
 var jquery = require('jquery');
 var stringify = require('./stringify');
 
-var Test = module.exports = function (frameTarget) {
+var Test = module.exports = function (opts) {
     this.windows = [];
     this.running = true;
     this.count = 0;
-    this.frameTarget = frameTarget;
+    this.frameTarget = opts.frameTarget;
+    this.stackedy = opts.stackedy;
 };
 
 Test.prototype = new EventEmitter;
@@ -62,7 +63,9 @@ Test.prototype.end = function () {
 Test.prototype.fail = function (err) {
     if (!this.running) {
         this.emit('fail', {
-            message : 'fail() called after test ended'
+            message : 'fail() called after test ended',
+            current : this.stackedy.current,
+            stack : this.stackedy.stack.slice()
         })
     }
     else this.emit('fail', err)
@@ -76,12 +79,16 @@ Test.prototype.equal = function (x, y, desc) {
     this.count ++;
     if (this.planned && this.count > this.planned) {
         this.emit('fail', {
-            message : 'more tests run than planned'
+            message : 'more tests run than planned',
+            current : this.stackedy.current,
+            stack : this.stackedy.stack.slice()
         });
     }
     else if (!this.running) {
         this.emit('fail', {
-            message : 'equal() called after test ended'
+            message : 'equal() called after test ended',
+            current : this.stackedy.current,
+            stack : this.stackedy.stack.slice()
         });
     }
     else if (x == y) this.emit('ok', 'equal', x, y, desc);
@@ -97,7 +104,9 @@ Test.prototype.notDeepEqual = function (x, y, desc) {
     this.count ++;
     if (this.planned && this.count > this.planned) {
         this.emit('fail', {
-            message : 'more tests run than planned'
+            message : 'more tests run than planned',
+            current : this.stackedy.current,
+            stack : this.stackedy.stack.slice()
         });
     }
     else if (!this.running) {
@@ -108,13 +117,17 @@ Test.prototype.notDeepEqual = function (x, y, desc) {
     else if (!traverse.deepEqual(x, y)) {
         this.emit('ok', {
             message : stringify(x) + ' notDeepEqual ' + stringify(y),
-            desc : desc
+            desc : desc,
+            current : this.stackedy.current,
+            stack : this.stackedy.stack.slice()
         });
     }
     else {
         this.emit('fail', {
             message : stringify(x) + ' notDeepEqual ' + stringify(y),
-            desc : desc
+            desc : desc,
+            current : this.stackedy.current,
+            stack : this.stackedy.stack.slice()
         });
     }
     
@@ -126,24 +139,32 @@ Test.prototype.deepEqual = function (x, y, desc) {
     if (this.planned && this.count > this.planned) {
         this.emit('fail', {
             message : 'more tests run than planned',
-            desc : desc
+            desc : desc,
+            current : this.stackedy.current,
+            stack : this.stackedy.stack.slice()
         });
     }
     else if (!this.running) {
         this.emit('fail', {
-            message : 'deepEqual() called after test ended'
+            message : 'deepEqual() called after test ended',
+            current : this.stackedy.current,
+            stack : this.stackedy.stack.slice()
         });
     }
     else if (traverse.deepEqual(x, y)) {
         this.emit('ok', {
             message : stringify(x) + ' deepEqual ' + stringify(y),
-            desc : desc
+            desc : desc,
+            current : this.stackedy.current,
+            stack : this.stackedy.stack.slice()
         });
     }
     else {
         this.emit('fail', {
             message : stringify(x) + ' deepEqual ' + stringify(y),
-            desc : desc
+            desc : desc,
+            current : this.stackedy.current,
+            stack : this.stackedy.stack.slice()
         });
     }
     

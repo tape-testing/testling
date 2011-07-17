@@ -34,7 +34,10 @@ var bundle = browserify({
     })
     .require({ jquery : 'jquery-browserify' })
     .use(jadeify(__dirname + '/views', { watch : true }))
-    .use(fileify('test_files', testDir, { watch : true }))
+    .use(fileify('test_files', testDir, {
+        extension : '.js',
+        watch : true,
+    }))
     .addEntry(__dirname + '/browser/main.js')
 ;
 
