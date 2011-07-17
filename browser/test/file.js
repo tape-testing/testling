@@ -178,15 +178,18 @@ File.prototype.run = function (context) {
             });
         }
         else {
+            var tests = {};
             Object.keys(module.exports).forEach(function (name) {
                 var fn = module.exports[name];
                 if (typeof fn !== 'function') return;
                 
-                var t = new Fn(self, name, fn);
+                var t = tests[name] = new Fn(self, name, fn);
                 t.appendTo(box.find('.more .functions'));
-                
-                self.running.stack.unshift(t);
-                t.run();
+            });
+            
+            Object.keys(tests).forEach(function (name) {
+                self.running.stack.unshift(tests[name]);
+                tests[name].run();
                 self.running.stack.shift();
             });
         }
