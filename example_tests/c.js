@@ -8,7 +8,10 @@ test('fast', function (t) {
     var x = 0;
     var iv = setInterval(function () {
         t.equal(n++, x++);
-        if (n == 20) clearInterval(iv);
+        if (n == 20) {
+            clearInterval(iv);
+            t.end();
+        }
     }, 250);
 });
 
@@ -19,6 +22,9 @@ test('slow', function (t) {
     var x = 0;
     var iv = setInterval(function () {
         t.equal(n++, x++);
-        if (n == 10) clearInterval(iv);
+        if (n == 10) {
+            clearInterval(iv);
+            t.end();
+        }
     }, 1000);
 });

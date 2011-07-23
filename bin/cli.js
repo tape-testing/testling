@@ -40,16 +40,28 @@ var testFiles = argv._.reduce(function reducer (acc, x) {
 }, []);
 
 var testling = require('../');
-testling.on('result', function (res) {
-    console.log('result');
-    console.log('    wanted: ' + res.wanted);
-    console.log('    found: ' + res.found);
+var suite = testling.suite();
+suite.on('result', function (res, test) {
+    console.log(test.filename + ' : ' + test.name);
+    if (res.thrown) {
+        console.log('    ' + res.message);
+    }
+    else if (!res.ok) {
+        console.log('    wanted: ' + res.wanted);
+        console.log('    found: ' + res.found);
+    }
+    else {
+        console.log('    ok');
+    }
 });
 
 testFiles.forEach(function (file) {
-    require(path.resolve(process.cwd(), file));
+    fs.readFile(file, function (err, src) {
+        if (err) console.error(err)
+        else suite.run(file, src)
+    });
 });
 
-testling.on('end', function () {
+suite.on('end', function () {
     console.log('all done');
 });
