@@ -1,9 +1,16 @@
-exports.immediate = function (t) {
-    throw 'immediate error';
-};
+var test = require('testling');
 
-exports.delayed = function (t) {
+test('immediate', function (t) {
+    t.equal('x', 'x');
+    t.end();
+});
+
+test('delayed', function (t) {
+    t.plan(2);
+    t.equal('a', 'a');
+    
     setTimeout(function () {
-        throw 'delayed error!';
+        t.equal(1, 1);
+        t.end();
     }, 100);
-};
+});

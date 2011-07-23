@@ -24,11 +24,12 @@ var testFiles = argv._.reduce(function reducer (acc, x) {
     }
     else if (fs.statSync(x).isDirectory()) {
         return fs.readdirSync(x)
-            .map(function (file) { return path.resolve(x, file) })
+            .map(function (file) {
+                return path.resolve(x, file)
+            })
             .filter(function (file) {
                 return !fs.statSync(file).isDirectory()
                     && path.extname(file) === '.js'
-                ;
             })
         ;
     }
@@ -38,4 +39,17 @@ var testFiles = argv._.reduce(function reducer (acc, x) {
     else return [];
 }, []);
 
-console.dir(testFiles);
+var testling = require('../');
+testling.on('result', function (res) {
+    console.log('result');
+    console.log('    wanted: ' + res.wanted);
+    console.log('    found: ' + res.found);
+});
+
+testFiles.forEach(function (file) {
+    require(path.resolve(process.cwd(), file));
+});
+
+testling.on('end', function () {
+    console.log('all done');
+});
