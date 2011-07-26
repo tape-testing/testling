@@ -40,13 +40,13 @@ var testFiles = argv._.reduce(function reducer (acc, x) {
 }, []);
 
 var testling = require('../');
-var suite = testling.suite();
-suite.on('result', function (res, test) {
-    console.log(test.filename + ' : ' + test.name);
-    if (res.thrown) {
-        console.log('    ' + res.message);
-    }
-    else if (!res.ok) {
+var suite = testling();
+
+var counts = {};
+
+suite.on('assert', function (res) {
+    console.log(res.test.filename + ' : ' + res.test.name);
+    if (!res.ok) {
         console.log('    wanted: ' + res.wanted);
         console.log('    found: ' + res.found);
     }
@@ -55,13 +55,21 @@ suite.on('result', function (res, test) {
     }
 });
 
-testFiles.forEach(function (file) {
-    fs.readFile(file, function (err, src) {
-        if (err) console.error(err)
-        else suite.run(file, src)
-    });
+suite.on('error', function (err) {
+    console.log(err.message);
 });
 
 suite.on('end', function () {
-    console.log('all done');
+    var percent = Math.floor(suite.counts.pass / suite.counts.total * 100);
+    console.log('\n' + percent + '% OF TESTS PASSED');
+});
+
+var pending = testFiles.length;
+testFiles.forEach(function (file) {
+    fs.readFile(file, function (err, src) {
+        if (err) console.error(err)
+        else suite.append(src, { filename : file })
+        pending --;
+        if (pending === 0) suite.run();
+    });
 });

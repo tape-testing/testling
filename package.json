@@ -45,7 +45,8 @@
         "traverse" : ">=0.3.6 <0.4",
         "jquery-browserify" : "1.6.0",
         "http-proxy" : ">=0.5.9 <0.6",
-        "tap" : ">=0.0.6 <0.1"
+        "tap" : ">=0.0.6 <0.1",
+        "intestine" : "0.0.x"
     },
     "devDependencies" : {
         "expresso" : "=0.7.x"
