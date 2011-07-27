@@ -63,7 +63,9 @@ suite.on('assert', function (res) {
         console.log(
             '\r'
             + 'FAILURE in ' + JSON.stringify(res.test.name)
-            + ' at ' + res.test.filename + ' line'
+            + ' at ' + res.test.filename + ' line '
+            + res.stack[0].start.line + ':\n'
+            + '  ' + res.stack[0].source()
             + '\n    wanted: ' + res.wanted
             + '\n    found: ' + res.found
             + '\n'

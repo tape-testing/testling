@@ -14,7 +14,7 @@ module.exports = function () {
         runner.context.require = function (lib) {
             if (lib === 'testling') {
                 return function (name, cb) {
-                    var t = new Test(name);
+                    var t = new Test(name, runner);
                     
                     t.on('assert', function (res) {
                         if (res.ok) runner.counts.pass ++
