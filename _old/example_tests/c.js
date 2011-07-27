@@ -7,7 +7,13 @@ test('fast', function (t) {
     var n = 0;
     var x = 0;
     var iv = setInterval(function () {
-        t.equal(n++, x++);
+        if (n == 3 || n == 5) {
+            t.equal(++n, x++);
+        }
+        else {
+            t.equal(n++, x++);
+        }
+        
         if (n == 20) {
             clearInterval(iv);
             t.end();

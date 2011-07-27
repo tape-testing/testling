@@ -76,4 +76,4 @@ exports.suite = function () {
     };
     
     return self;
-}
+};

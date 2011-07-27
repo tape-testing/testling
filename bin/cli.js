@@ -44,19 +44,31 @@ var suite = testling();
 
 var counts = {};
 
-suite.on('assert', function (res) {
-    console.log(res.test.filename + ' : ' + res.test.name);
-    if (!res.ok) {
-        console.log('    wanted: ' + res.wanted);
-        console.log('    found: ' + res.found);
-    }
-    else {
-        console.log('    ok');
-    }
+function print () {
+    var percent = Math.floor(
+        (suite.counts.total / suite.counts.planned) * 100
+    ).toString();
+    percent = Array(4 - percent.length).join(' ') + percent;
+    
+    process.stdout.write('\r' + percent + '% COMPLETE');
+}
+
+suite.on('plan', function () {
+    print();
 });
 
-suite.on('error', function (err) {
-    console.log(err.message);
+suite.on('assert', function (res) {
+    print();
+    if (!res.ok) {
+        console.log(
+            '\r'
+            + 'FAILURE in ' + JSON.stringify(res.test.name)
+            + ' at ' + res.test.filename + ' line'
+            + '\n    wanted: ' + res.wanted
+            + '\n    found: ' + res.found
+            + '\n'
+        );
+    }
 });
 
 suite.on('end', function () {
