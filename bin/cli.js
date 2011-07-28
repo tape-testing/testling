@@ -60,12 +60,20 @@ suite.on('plan', function () {
 suite.on('assert', function (res) {
     print();
     if (!res.ok) {
+        var indent = res.stack[0].lines[0].match(/^\s*/)[0].length;
+        var src = res.stack[0].lines
+            .map(function (x) {
+                var ix = x.match(/\S|$/).index;
+                return x.slice(Math.min(ix, indent));
+            })
+            .join('\n')
+        ;
         console.log(
             '\r'
             + 'FAILURE in ' + JSON.stringify(res.test.name)
             + ' at ' + res.test.filename + ' line '
             + res.stack[0].start.line + ':\n'
-            + '  ' + res.stack[0].source()
+            + '  ' + src
             + '\n    wanted: ' + res.wanted
             + '\n    found: ' + res.found
             + '\n'
