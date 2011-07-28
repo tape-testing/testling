@@ -72,12 +72,56 @@ suite.on('assert', function (res) {
             '\r'
             + 'FAILURE in ' + JSON.stringify(res.test.name)
             + ' at ' + res.test.filename + ' line '
-            + res.stack[0].start.line + ':\n'
+            + (res.stack[0].start.line + 1) + ':\n'
             + '  ' + src
-            + '\n    wanted: ' + res.wanted
-            + '\n    found: ' + res.found
-            + '\n'
         );
+        
+        if (res.type === 'equal' && res.stack[0].value[0][2] === 'equal'
+        && res.stack[0].value[1][0][0].start) {
+            var nodes = {
+                wanted : res.stack[0].value[1][0][0],
+                found : res.stack[0].value[1][1][0]
+            };
+            
+            var cols = {
+                wanted : {
+                    start : nodes.wanted.start.col - indent + 2,
+                    end : nodes.wanted.end.col - indent + 3
+                },
+                found : {
+                    start : nodes.found.start.col - indent + 2,
+                    end : nodes.found.end.col - indent + 3
+                }
+            };
+            cols.wanted.length = cols.wanted.end - cols.wanted.start;
+            cols.found.length = cols.found.end - cols.found.start;
+            
+            var expr = {
+                wanted : src
+                    .slice(cols.wanted.start - 2, cols.wanted.end - 2)
+                ,
+                found : src
+                    .slice(cols.found.start - 2, cols.found.end - 1)
+            };
+            
+            console.log(
+                Array(cols.wanted.start + 1).join(' ')
+                + '^'
+                + Array(cols.found.start - (cols.wanted.start + 1) + 1).join(' ')
+                + '^'
+            );
+            
+            console.log('    (' + expr.wanted + ') == ' + res.wanted);
+            console.log('    (' + expr.found + ') == ' + res.found);
+            console.log();
+        }
+        else {
+            console.log(
+                '    wanted: ' + res.wanted
+                + '\n    found: ' + res.found
+                + '\n'
+            );
+        }
     }
 });
 
