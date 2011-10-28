@@ -19,9 +19,11 @@ else {
 }
 
 var test = module.exports = require('./lib/test');
+test.output = output;
+
 test.push = function (name, res) {
-    res.browser = 'node/jsdom';
+    res.browser = test.browser || 'node/jsdom';
     output(name, res);
 };
-output('visit', 'node/jsdom');
-output('launched', 'node/jsdom');
+output('visit', test.browser || 'node/jsdom');
+output('launched', test.browser || 'node/jsdom');
