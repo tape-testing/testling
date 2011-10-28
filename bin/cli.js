@@ -39,4 +39,3 @@ seq(files).seqEach_(function (next, file) {
         console.error('\r\n  ' + lines.slice(0,-7).join('\r\n') + '\r\n');
     }
 });
-
