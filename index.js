@@ -3,8 +3,10 @@ var outputs = {
 };
 
 var outputName = process.env.TESTLING_OUTPUT || 'text';
-var output = outputs[outputName];
-if (!output) {
+if (outputs[outputName]) {
+    var output = outputs[outputName]();
+}
+else {
     throw [
         'Output format ' + JSON.stringify(outputName) + ' not supported.',
         'Export TESTLING_OUTPUT to set the output format.',
@@ -18,5 +20,8 @@ if (!output) {
 
 var test = module.exports = require('./lib/test');
 test.push = function (name, res) {
-    console.log(name + ': ' + JSON.stringify(res));
+    res.browser = 'node/jsdom';
+    output(name, res);
 };
+output('visit', 'node/jsdom');
+output('launched', 'node/jsdom');
