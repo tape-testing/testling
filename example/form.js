@@ -2,10 +2,16 @@ var test = require('testling');
 
 test('login', function (t) {
     t.createWindow('http://localhost:8081', function (win) {
+        var pending = 2;
+        function finish () {
+            if (--pending === 0) t.end();
+        }
+        
         var form = win.document.getElementsByTagName('form')[0];
+        
         t.submitForm(form, function (w) {
             t.equal(w.document.body.innerHTML, 'ACCESS DENIED');
-            t.end();
+            finish();
         });
         
         for (var i = 0; i < form.elements.length; i++) {
@@ -16,7 +22,7 @@ test('login', function (t) {
         
         t.submitForm(form, function (w) {
             t.equal(w.document.body.innerHTML, 'welcome!');
-            t.end();
+            finish();
         });
     });
 });
