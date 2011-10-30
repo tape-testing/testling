@@ -1,12 +1,10 @@
 #!/usr/bin/env node
 var http = require('http');
-var fs = require('fs');
-var path = require('path');
 
 var runner = require('../lib/run');
 var testFiles = require('../lib/test_files');
 var streamFiles = require('../lib/stream_files');
-var withConfig = require('../lib/with_config');
+var withConfig = require('../lib/account/with_config');
 
 var parse = require('optimist')
     .usage('Usage: testling [test files] {OPTIONS}')
@@ -58,7 +56,14 @@ if (argv.browserlist) {
     });
 }
 else if (argv.browsers) {
-    withConfig(argv.config, function (config) {
+    withConfig(argv.config, function (err, config) {
+        if (err) {
+            console.error('\r\nError: ' + err);
+            return;
+        }
+console.dir(config);
+return;
+        
         var auth = 'basic ' + new Buffer(
             [ config.username, config.password ].join(':')
         ).toString('base64');
