@@ -48,15 +48,17 @@ usage
 Usage: testling [test files] {OPTIONS}
 
 Options:
-  --browsers, -b     Run your tests remotely in real browsers on testling.com.                                                    
+  --browsers, -b     Run your tests remotely in real browsers on testling.com.
+
   --output, -o       The output format to use in remote mode.
       http://testling.com/docs/#output-parameter
                  
   --noinstrument     Turn off instrumentation for particular files in remote mode.
       http://testling.com/docs/#noinstrument
 
-  --browserlist, -l  Show the available browsers on testling.com.                                                                 
-  --config           Read configuration information from this file.                                                                 [default: "/home/substack/.config/testling.json"]
+  --browserlist, -l  Show the available browsers on testling.com.
+
+  --config           Read configuration information from this file.
 ```
 
 install
