@@ -61,24 +61,30 @@ else if (argv.browsers) {
             console.error('\r\nError: ' + err);
             return;
         }
-console.dir(config);
-return;
         
         var auth = 'basic ' + new Buffer(
-            [ config.username, config.password ].join(':')
+            [ config.email, config.password ].join(':')
         ).toString('base64');
+        
+        var params = {};
+        if (argv.output) params.output = argv.output;
+        if (typeof argv.browsers === 'string') {
+            params.browsers = argv.browsers;
+        }
+        
+        var query = Object.keys(params).map(function (key) {
+            return escape(key) + '=' + escape(params[key]);
+        }).join('&');
         
         var opts = {
             method : 'PUT',
             host : 'testling.com',
             port : 80,
-            path : '/',
+            path : '/?' + query,
             headers : { authorization : auth }
         };
         var req = http.request(opts, function (res) {
-            res.on('data', function (buf) {
-                // ...
-            });
+            res.pipe(process.stdout);
         });
         streamFiles(testFiles(argv._)).pipe(req);
     });
