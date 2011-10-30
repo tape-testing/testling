@@ -58,3 +58,10 @@ Options:
   --browserlist, -l  Show the available browsers on testling.com.                                                                 
   --config           Read configuration information from this file.                                                                 [default: "/home/substack/.config/testling.json"]
 ```
+
+install
+=======
+
+With [npm](http://npmjs.org) just do:
+
+    npm install -g testling
