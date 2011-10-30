@@ -67,3 +67,5 @@ install
 With [npm](http://npmjs.org) just do:
 
     npm install -g testling
+
+![attack of the testlings!](http://substack.net/images/browsers/war_of_the_browsers.png)
