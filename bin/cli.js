@@ -10,8 +10,16 @@ var parse = require('optimist')
     .usage('Usage: testling [test files] {OPTIONS}')
     .option('browsers', {
         alias : 'b',
-        desc : 'Run your tests in real browsers on testling.com.\n'
-            + 'Otherwise, run the tests with jsdom locally.'
+        desc : 'Run your tests remotely in real browsers on testling.com.'
+    })
+    .option('output', {
+        alias : 'o',
+        desc : 'The output format to use in remote mode.\r\n'
+            + '      http://testling.com/docs/#output-parameter\r\n'
+    })
+    .option('noinstrument', {
+        desc : 'Turn off instrumentation for particular files in remote mode.\r\n'
+            + '      http://testling.com/docs/#noinstrument\r\n'
     })
     .option('browserlist', {
         alias : 'l',
@@ -66,11 +74,14 @@ else if (argv.browsers) {
             [ config.email, config.password ].join(':')
         ).toString('base64');
         
-        var params = {};
-        if (argv.output) params.output = argv.output;
-        if (typeof argv.browsers === 'string') {
-            params.browsers = argv.browsers;
-        }
+        var params = [ 'output', 'browsers', 'noinstrument' ]
+            .reduce(function (acc, key) {
+                if (typeof argv[key] === 'string') {
+                    acc[key] = argv[key];
+                }
+                return acc;
+            }, {})
+        ;
         
         var query = Object.keys(params).map(function (key) {
             return escape(key) + '=' + escape(params[key]);
