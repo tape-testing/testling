@@ -1,7 +1,12 @@
 #!/usr/bin/env node
 var http = require('http');
 var fs = require('fs');
+var path = require('path');
+
 var runner = require('../lib/run');
+var testFiles = require('../lib/test_files');
+var streamFiles = require('../lib/stream_files');
+var withConfig = require('../lib/with_config');
 
 var parse = require('optimist')
     .usage('Usage: testling [test files] {OPTIONS}')
@@ -13,6 +18,10 @@ var parse = require('optimist')
     .option('browserlist', {
         alias : 'l',
         desc : 'Show the available browsers on testling.com.'
+    })
+    .option('config', {
+        default : process.env.HOME + '/.config/testling.json',
+        desc : 'Read configuration information from this file.'
     })
 ;
 var argv = parse.argv;
@@ -49,12 +58,28 @@ if (argv.browserlist) {
     });
 }
 else if (argv.browsers) {
-    var opts = {
-    };
-    http.request();
+    withConfig(argv.config, function (config) {
+        var auth = 'basic ' + new Buffer(
+            [ config.username, config.password ].join(':')
+        ).toString('base64');
+        
+        var opts = {
+            method : 'PUT',
+            host : 'testling.com',
+            port : 80,
+            path : '/',
+            headers : { authorization : auth }
+        };
+        var req = http.request(opts, function (res) {
+            res.on('data', function (buf) {
+                // ...
+            });
+        });
+        streamFiles(testFiles(argv._)).pipe(req);
+    });
 }
 else if (argv._.length) {
-    runner(argv._);
+    runner(testFiles(argv._));
 }
 else {
     parse.showHelp();
