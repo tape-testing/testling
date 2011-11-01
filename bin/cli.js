@@ -21,6 +21,10 @@ var parse = require('optimist')
         desc : 'Turn off instrumentation for particular files in remote mode.\r\n'
             + '      http://testling.com/docs/#noinstrument\r\n'
     })
+    .option('main', {
+        desc : 'Use a filename besides "test.js" to start multifile bundles.\r\n'
+            + '      http://testling.com/docs/#main\r\n'
+    })
     .option('browserlist', {
         alias : 'l',
         desc : 'Show the available browsers on testling.com.'
@@ -74,7 +78,7 @@ else if (argv.browsers) {
             [ config.email, config.password ].join(':')
         ).toString('base64');
         
-        var params = [ 'output', 'browsers', 'noinstrument' ]
+        var params = [ 'output', 'browsers', 'noinstrument', 'main' ]
             .reduce(function (acc, key) {
                 if (typeof argv[key] === 'string') {
                     acc[key] = argv[key];
@@ -92,7 +96,7 @@ else if (argv.browsers) {
             host : 'testling.com',
             port : 80,
             path : '/?' + query,
-            headers : { authorization : auth }
+            headers : { authorization : auth },
         };
         var req = http.request(opts, function (res) {
             res.pipe(process.stdout);
