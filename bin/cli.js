@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 var http = require('http');
 
+var testling = require('testling'); // sets up the test output
+
 var runner = require('../lib/run');
 var testFiles = require('../lib/test_files');
 var streamFiles = require('../lib/stream_files');
