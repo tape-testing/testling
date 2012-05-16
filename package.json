@@ -28,14 +28,13 @@
         "mkdirp" : "0.0.x",
         "pw" : "0.0.x",
         "request" : "2.1.x",
-        "optimist" : "0.2.x",
-        "jsdom" : "https://github.com/substack/jsdom/tarball/master"
+        "optimist" : "0.2.x"
     },
     "devDependencies" : {
         "tap" : "0.0.x"
     },
     "engines" : {
-        "node" : ">=0.4.0"
+        "node" : "*"
     },
     "license" : "MIT/X11",
     "author" : {
