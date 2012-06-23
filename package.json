@@ -1,7 +1,7 @@
 {
     "name" : "testling",
-    "description" : "run testling tests headlessly and remotely on real browsers",
-    "version" : "0.0.1",
+    "description" : "write tests for browser code",
+    "version" : "0.1.0",
     "repository" : {
         "type" : "git",
         "url" : "git://github.com/substack/testling.git"
@@ -24,17 +24,12 @@
         "test" : "tap test/*.js"
     },
     "dependencies" : {
-        "seq" : "0.3.x",
-        "mkdirp" : "0.0.x",
-        "pw" : "0.0.x",
-        "request" : "2.1.x",
-        "optimist" : "0.2.x"
-    },
-    "devDependencies" : {
-        "tap" : "0.0.x"
+        "optimist" : "~0.3.4",
+        "tap" : "~0.2.5",
+        "browserify" : "~1.13.0"
     },
     "engines" : {
-        "node" : "*"
+        "node" : ">=0.6"
     },
     "license" : "MIT/X11",
     "author" : {
