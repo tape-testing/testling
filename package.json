@@ -7,8 +7,9 @@
         "url" : "git://github.com/substack/testling.git"
     },
     "main" : "index.js",
+    "browserify" : "browser.js",
     "bin" : {
-        "testling" : "bin/cli.js"
+        "testling" : "bin/cmd.js"
     },
     "keywords" : [
         "test",
@@ -19,9 +20,6 @@
         "lib" : ".",
         "example" : "example",
         "test" : "test"
-    },
-    "scripts" : {
-        "test" : "tap test/*.js"
     },
     "dependencies" : {
         "optimist" : "~0.3.4",

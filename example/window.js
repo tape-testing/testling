@@ -1,4 +1,4 @@
-var test = require('testling');
+var test = require('../');
 
 test('title test', function (t) {
     t.createWindow('http://substack.net/', function (win) {

@@ -1,8 +1,8 @@
-var test = require('testling');
+var test = require('../');
 
 test('login', function (t) {
-    t.createWindow('http://localhost:8081', function (win, $) {
-        var pending = 2;
+    var w = t.createWindow('http://localhost:8081');
+    w.next(function (win, $) {
         function finish () {
             if (--pending === 0) t.end();
         }
