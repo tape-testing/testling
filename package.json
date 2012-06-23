@@ -22,9 +22,11 @@
         "test" : "test"
     },
     "dependencies" : {
+        "jsonify" : "~0.0.0",
+        "domready" : "~0.2.11",
         "optimist" : "~0.3.4",
         "tap" : "~0.2.5",
-        "browserify" : "~1.13.0"
+        "browserify" : "~1.13.1"
     },
     "engines" : {
         "node" : ">=0.6"
