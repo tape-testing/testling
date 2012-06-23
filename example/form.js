@@ -1,25 +1,22 @@
 var test = require('../');
 
-test('login', function (t) {
-    var w = t.createWindow('http://localhost:8081');
+test('submit a form', function (t) {
+    t.plan(1);
+    
+    var uri = 'http://localhost:7272/test-form/';
+    var w = t.createWindow(uri, { t : t });
     w.next(function (win, $) {
-        function finish () {
-            if (--pending === 0) t.end();
-        }
+        t.log('page[0]: ' + win.location.href);
         
-        var form = win.document.getElementsByTagName('form')[0];
-        
-        t.submitForm(form, function (w) {
-            t.equal(w.document.body.innerHTML, 'ACCESS DENIED');
-            finish();
-        });
-        
-        $('input[name=user]', form).val('abc');
-        $('input[name=pass]', form).val('def');
-        
-        t.submitForm(form, function (w) {
-            t.equal(w.document.body.innerHTML, 'welcome!');
-            finish();
-        });
+        var form = $('#form')[0];
+        $('input[name=login]').val('beep');
+        $('input[name=passw]').val('boop');
+        $('form').submit();
+    });
+    
+    w.next(function (win, $) {
+        t.log('page[1]: ' + win.location.href);
+        t.equal($('#welcome p:first').text(), 'Login successful.');
+        t.end();
     });
 });

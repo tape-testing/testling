@@ -23,6 +23,7 @@
     },
     "dependencies" : {
         "jsonify" : "~0.0.0",
+        "schoolbus" : "~0.0.1",
         "domready" : "~0.2.11",
         "optimist" : "~0.3.4",
         "tap" : "~0.2.5",

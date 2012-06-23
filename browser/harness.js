@@ -1,7 +1,7 @@
 var Results = require('tap/lib/tap-results');
 var Harness = require('tap/lib/tap-harness');
-var Test = require('tap/lib/tap-test');
 
+var Test = require('./test');
 var output = require('./output');
 
 module.exports = function () {
@@ -15,20 +15,23 @@ module.exports = function () {
             output.write(res)
         });
         harness.results.list.length = 0
-    })
-
-    var streamEnded = false
+    });
+    
+    var streamEnded = false;
     harness.on('end', function () {
-        //console.error('global ending the stream')
         if (!streamEnded) {
             harness.results.list.forEach(function (res) {
-                output.write(res)
-            })
-            harness.results.list.length = 0
-            output.end()
-            streamEnded = true
+                output.write(res);
+            });
+            harness.results.list.length = 0;
+            output.end();
+            streamEnded = true;
         }
-    })
+    });
+    
+    harness.on('log', function (msg) {
+        output.write({ 'log' : msg });
+    });
     
     /*
     process.on('unhandledException', function (e) {
