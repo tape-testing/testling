@@ -26,6 +26,7 @@
         "schoolbus" : "~0.0.1",
         "domready" : "~0.2.11",
         "optimist" : "~0.3.4",
+        "mkdirp" : "~0.3.3",
         "tap" : "~0.2.5",
         "browserify" : "~1.13.1"
     },
