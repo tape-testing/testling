@@ -1,26 +1,41 @@
 #!/usr/bin/env node
+var shoe = require('shoe');
+var http = require('http');
+var ecstatic = require('ecstatic')(__dirname + '/../static');
 var argv = require('optimist').argv;
+var mkdirp = require('mkdirp');
+var insertProxy = require('../lib/proxy');
 
 //var profileDir = '/tmp/' + Math.random().toString(16).slice(2);
 var profileDir = '/tmp/02faf1b1';
-var mkdirp = require('mkdirp').sync(profileDir);
+mkdirp.sync(profileDir);
 
-var script = '<script src="http://localhost:9595/proxy.js"></script>';
-var insertProxy = require('../lib/proxy');
+var port = {
+    proxy : 54045,
+    server : 54046
+};
 
-var port = 54045;
-var proxy = insertProxy(script, [ 'http://localhost:9595' ]);
-proxy.listen(port);
+var script = '<script src="http://localhost:'
+    + port.server
+    + '/proxy.js"></script>'
+;
+var proxy = insertProxy(script, [ 'http://localhost:' + port.server ]);
+proxy.listen(port.proxy);
 
-var http = require('http');
-var ecstatic = require('ecstatic')(__dirname + '/../static');
 var server = http.createServer(ecstatic);
-server.listen(9595);
-console.log([
-    'no_proxy=""',
+server.listen(port.server);
+
+var sock = shoe(function (stream) {
+    stream.pipe(process.stdout, { end : false });
+});
+sock.install(server, '/push');
+
+var spawn = require('child_process').spawn;
+var args = [
     'google-chrome',
-    '--incognito',
-    '--proxy-server=localhost:' + port,
+    '--proxy-server=localhost:' + port.proxy,
     '--user-data-dir=' + profileDir,
-    'http://localhost:9595'
-].join(' '));
+    'http://localhost:' + port.server
+];
+console.log(args.join(' '));
+//spawn('xvfb-run', args, { env : { no_proxy : '' } });
