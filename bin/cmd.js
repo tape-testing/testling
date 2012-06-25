@@ -4,7 +4,9 @@ var http = require('http');
 var ecstatic = require('ecstatic')(__dirname + '/../static');
 var argv = require('optimist').argv;
 var mkdirp = require('mkdirp');
+
 var insertProxy = require('../lib/proxy');
+var producer = require('../lib/producer');
 
 //var profileDir = '/tmp/' + Math.random().toString(16).slice(2);
 var profileDir = '/tmp/02faf1b1';
@@ -40,10 +42,9 @@ var browser;
 
 var JSONStream = require('JSONStream');
 var sock = shoe(function (stream) {
-    var tapProducer = new(require('tap/lib/tap-producer'));
     stream
         .pipe(JSONStream.parse([ true ]))
-        .pipe(tapProducer)
+        .pipe(producer())
         .on('end', function () {
             console.log('--------')
             server.close();
