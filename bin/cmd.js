@@ -1,16 +1,16 @@
 #!/usr/bin/env node
-var shoe = require('shoe');
-var http = require('http');
-var ecstatic = require('ecstatic')(__dirname + '/../static');
 var argv = require('optimist').argv;
-var mkdirp = require('mkdirp');
+var bundle = require('../lib/bundle')(argv._);
 
 var insertProxy = require('../lib/proxy');
 var producer = require('../lib/producer');
 
 //var profileDir = '/tmp/' + Math.random().toString(16).slice(2);
 var profileDir = '/tmp/02faf1b1';
-mkdirp.sync(profileDir);
+(function () {
+    var mkdirp = require('mkdirp');
+    mkdirp.sync(profileDir);
+})();
 
 var port = {
     proxy : 54045,
@@ -22,7 +22,17 @@ var script = '<script src="'
     + '"></script>'
 ;
 var proxy = insertProxy(script, [ 'http://localhost:' + port.server ]);
-var server = http.createServer(ecstatic);
+var server = (function () {
+    var http = require('http');
+    var ecstatic = require('ecstatic')(__dirname + '/../static');
+    return http.createServer(function (req, res) {
+        if (req.url.split('?')[0] === '/') {
+            res.setHeader('content-type', 'text/html');
+            res.end('<script>' + bundle + '</script>');
+        }
+        else ecstatic(req, res)
+    });
+})();
 
 var launcher = require('../lib/launcher');
 var browser;
@@ -41,12 +51,12 @@ var browser;
 })();
 
 var JSONStream = require('JSONStream');
+var shoe = require('shoe');
 var sock = shoe(function (stream) {
     stream
         .pipe(JSONStream.parse([ true ]))
         .pipe(producer())
         .on('end', function () {
-            console.log('--------')
             server.close();
             proxy.close();
             browser.kill();
