@@ -15,9 +15,9 @@ var port = {
     server : 54046
 };
 
-var script = '<script src="http://localhost:'
-    + port.server
-    + '/proxy.js"></script>'
+var script = '<script src="'
+    + 'http://localhost:' + port.server + '/proxy.js'
+    + '"></script>'
 ;
 var proxy = insertProxy(script, [ 'http://localhost:' + port.server ]);
 proxy.listen(port.proxy);
@@ -25,8 +25,15 @@ proxy.listen(port.proxy);
 var server = http.createServer(ecstatic);
 server.listen(port.server);
 
+var JSONStream = require('JSONStream');
 var sock = shoe(function (stream) {
-    stream.pipe(process.stdout, { end : false });
+    var tapProducer = new(require('tap/lib/tap-producer'));
+    stream
+        .pipe(JSONStream.parse([ true ]))
+        .pipe(tapProducer)
+        .on('end', function () { console.log('--------') })
+        .pipe(process.stdout, { end : false })
+    ;
 });
 sock.install(server, '/push');
 

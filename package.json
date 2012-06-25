@@ -29,7 +29,7 @@
         "mkdirp" : "~0.3.3",
         "tap" : "~0.2.5",
         "browserify" : "~1.13.1",
-        "shoe" : "~0.0.0",
+        "shoe" : "~0.0.1",
         "event-stream" : "~2.0.4",
         "JSONStream" : "~0.3.0"
     },

@@ -5,6 +5,7 @@ test('submit a form', function (t) {
     
     var uri = 'http://localhost:7272/test-form/';
     var w = t.createWindow(uri, { t : t });
+    
     w.next(function (win, $) {
         t.log('page[0]: ' + win.location.href);
         
