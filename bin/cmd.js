@@ -20,10 +20,23 @@ var script = '<script src="'
     + '"></script>'
 ;
 var proxy = insertProxy(script, [ 'http://localhost:' + port.server ]);
-proxy.listen(port.proxy);
-
 var server = http.createServer(ecstatic);
-server.listen(port.server);
+
+var launcher = require('../lib/launcher');
+var browser;
+(function () {
+    var pending = 2;
+    proxy.listen(port.proxy, onready);
+    server.listen(port.server, onready);
+    function onready () {
+        if (--pending !== 0) return;
+        browser = launcher({
+            proxy : port.proxy,
+            server : port.server,
+            profileDir : profileDir,
+        });
+    }
+})();
 
 var JSONStream = require('JSONStream');
 var sock = shoe(function (stream) {
@@ -31,18 +44,15 @@ var sock = shoe(function (stream) {
     stream
         .pipe(JSONStream.parse([ true ]))
         .pipe(tapProducer)
-        .on('end', function () { console.log('--------') })
+        .on('end', function () {
+            console.log('--------')
+            server.close();
+            proxy.close();
+            browser.kill();
+            
+            process.exit();
+        })
         .pipe(process.stdout, { end : false })
     ;
 });
 sock.install(server, '/push');
-
-var spawn = require('child_process').spawn;
-var args = [
-    'google-chrome',
-    '--proxy-server=localhost:' + port.proxy,
-    '--user-data-dir=' + profileDir,
-    'http://localhost:' + port.server
-];
-console.log(args.join(' '));
-//spawn('xvfb-run', args, { env : { no_proxy : '' } });
