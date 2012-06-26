@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 var argv = require('optimist')
     .option('headless', { default : true, type : 'boolean' })
-    .option('kill', { default : true, type : 'boolean' })
     .default('proxy', 'localhost:54045')
     .default('server', 'localhost:54046')
     .argv
@@ -54,7 +53,7 @@ function withBrowser (browser) {
             .pipe(JSONStream.parse([ true ]))
             .pipe(producer())
             .on('end', function () {
-                if (argv.kill) {
+                if (argv.headless) {
                     process.exit();
                 }
             })
