@@ -57,6 +57,7 @@ var server = (function () {
                 browser : argv.browser,
                 version : argv.version,
                 proxy : 'localhost:' + ports.proxy,
+                noProxy : 'localhost:' + ports.server,
             };
             launch(uri, opts, function (err, ps) {
                 if (err) console.error(err)

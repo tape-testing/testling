@@ -4,7 +4,6 @@ test('submit a form', function (t) {
     t.plan(1);
     
     var uri = 'http://localhost:7272/test-form/';
-t.log(uri); 
     var w = t.createWindow(uri, { t : t });
     
     w.next(function (win, $) {
