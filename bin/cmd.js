@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var launcher = require('browser-launcher');
+var testlingVisit = require('../lib/testling_visit');
 var insertProxy = require('../lib/proxy');
 var producer = require('../lib/producer');
 
@@ -28,66 +29,65 @@ var server = (function () {
     });
 })();
 
-(function () {
-    var pending = 2;
-    var ports = {
-        proxy : parseInt(argv.proxy.split(':')[1], 10),
-        server : parseInt(argv.server.split(':')[1], 10),
-    };
-    var uri = 'http://localhost:' + ports.server + '/?' + Math.random();
-    
-    proxy.listen(ports.proxy, onready);
-    server.listen(ports.server, onready);
-    
-    function onready () {
-        if (--pending !== 0) return;
-        
-        if (argv.browser === 'echo') {
-            console.log([
-                uri, '  proxy:     localhost:' + ports.proxy
-            ].join('\n'));
-            return withBrowser(process);
-        }
-        
-        launcher(function (err, launch) {
-            if (err) return console.error(err);
-            
-            var opts = {
-                headless : argv.headless,
-                browser : argv.browser,
-                version : argv.version,
-                proxy : 'localhost:' + ports.proxy,
-                noProxy : 'localhost:' + ports.server,
-            };
-            launch(uri, opts, function (err, ps) {
-                if (err) console.error(err)
-                else withBrowser(ps)
-            });
-        });
-    }
-    
-})();
-
 var JSONStream = require('JSONStream');
 var shoe = require('shoe');
+var sock = shoe(function (stream) {
+    stream
+        .pipe(JSONStream.parse([ true ]))
+        .pipe(producer())
+        .on('end', function () {
+            if (argv.headless) {
+                process.exit();
+            }
+        })
+        .pipe(process.stdout, { end : false })
+    ;
+});
+sock.install(server, '/push');
 
-function withBrowser (ps) {
-    var sock = shoe(function (stream) {
-        stream
-            .pipe(JSONStream.parse([ true ]))
-            .pipe(producer())
-            .on('end', function () {
-                if (argv.headless) {
-                    process.exit();
-                }
-            })
-            .pipe(process.stdout, { end : false })
-        ;
-    });
-    sock.install(server, '/push');
+var pending = 2;
+var ports = {
+    proxy : parseInt(argv.proxy.split(':')[1], 10),
+    server : parseInt(argv.server.split(':')[1], 10),
+};
+var uri = 'http://localhost:' + ports.server + '/?' + Math.random();
+
+proxy.listen(ports.proxy, onready);
+server.listen(ports.server, onready);
+
+function onready () {
+    if (--pending !== 0) return;
     
-    ps.on('exit', function () {
-        server.close();
-        proxy.close();
+    if (argv.browser === 'echo') {
+        console.log([
+            uri, '  proxy:     localhost:' + ports.proxy
+        ].join('\n'));
+        return withBrowser(process);
+    }
+    
+    if (/^testling\./.test(argv.browser)) {
+        testlingVisit(uri, argv, function () {
+            process.exit();
+        });
+        return;
+    }
+    
+    launcher(function (err, launch) {
+        if (err) return console.error(err);
+        
+        var opts = {
+            headless : argv.headless,
+            browser : argv.browser,
+            version : argv.version,
+            proxy : 'localhost:' + ports.proxy,
+            noProxy : 'localhost:' + ports.server,
+        };
+        launch(uri, opts, function (err, ps) {
+            if (err) return console.error(err);
+            ps.on('exit', function () {
+                server.close();
+                proxy.close();
+            });
+        });
     });
 }
