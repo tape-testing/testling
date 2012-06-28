@@ -21,6 +21,9 @@
         "example" : "example",
         "test" : "test"
     },
+    "scripts" : {
+        "install" : "browserify node_modules/schoolbus/proxy.js -o static/proxy.js"
+    },
     "dependencies" : {
         "browser-launcher" : "~0.0.1",
         "jsonify" : "~0.0.0",
