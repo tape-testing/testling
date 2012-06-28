@@ -42,6 +42,13 @@ var server = (function () {
     function onready () {
         if (--pending !== 0) return;
         
+        if (argv.browser === 'echo') {
+            console.log([
+                uri, '  proxy:     localhost:' + ports.proxy
+            ].join('\n'));
+            return withBrowser(process);
+        }
+        
         launcher(function (err, launch) {
             if (err) return console.error(err);
             

@@ -22,7 +22,7 @@
         "test" : "test"
     },
     "dependencies" : {
-        "browser-launcher" : "~0.0.0",
+        "browser-launcher" : "~0.0.1",
         "jsonify" : "~0.0.0",
         "schoolbus" : "~0.0.1",
         "domready" : "~0.2.11",
