@@ -36,7 +36,9 @@
         "shoe" : "~0.0.2",
         "event-stream" : "~2.0.4",
         "JSONStream" : "~0.3.0",
-        "request" : "~2.9.202"
+        "request" : "~2.9.202",
+        "promzard" : "~0.1.5",
+        "pw" : "~0.0.3"
     },
     "engines" : {
         "node" : ">=0.6"
