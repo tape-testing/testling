@@ -66,8 +66,8 @@ function onready () {
     }
     
     if (/^testling\./.test(argv.browser)) {
-        testlingVisit(uri, argv, function () {
-            process.exit();
+        testlingVisit(uri, argv, function (err, res) {
+            if (err) return console.error(err);
         });
         return;
     }
