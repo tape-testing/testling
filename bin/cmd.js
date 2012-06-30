@@ -11,11 +11,11 @@ var argv = require('optimist')
     .default('server', 'localhost:54046')
     .argv
 ;
-if (argv.list === 'local') {
+if (argv._[0] === 'list') {
     launcher.config.read(function (err, cfg) {
         if (err) return console.error(err);
         cfg.browsers.local.forEach(function (browser) {
-            console.log(browser.name);
+            console.log(browser.name + '/' + browser.version);
         });
     });
     return;

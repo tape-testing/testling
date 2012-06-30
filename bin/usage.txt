@@ -1,7 +1,7 @@
 Usage:
 
   testling tunnel
-  testling --list=TYPE
+  testling list
   testling OPTIONS [test files]
 
 testling tunnel
@@ -9,9 +9,9 @@ testling tunnel
   Open a testling ssh tunnel. This step is necessary before using testling
   browsers.
   
-testling --list=TYPE
+testling list
 
-  List TYPE browsers. Available TYPEs: local.
+  List local available browsers.
 
 testling OPTIONS [test files]
 
