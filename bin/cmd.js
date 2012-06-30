@@ -3,6 +3,7 @@
 var launcher = require('browser-launcher');
 var testlingVisit = require('../lib/testling/visit');
 var createServers = require('../lib/servers');
+var fs = require('fs');
 
 var argv = require('optimist')
     .option('headless', { default : true, type : 'boolean' })
@@ -11,6 +12,10 @@ var argv = require('optimist')
     .argv
 ;
 argv.files = argv.files || argv._;
+if (argv.files.length === 0) {
+    fs.createReadStream(__dirname + '/usage.txt').pipe(process.stdout);
+    return;
+}
 
 var tunnel = require('../lib/testling/tunnel');
 if (argv._[0] === 'tunnel') return tunnel(argv.server);
@@ -20,6 +25,7 @@ createServers(argv, function (uri, ports) {
         console.log([
             uri, '  proxy:     localhost:' + ports.proxy
         ].join('\n'));
+        return;
     }
     
     if (/^testling\./.test(argv.browser)) {

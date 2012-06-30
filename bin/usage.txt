@@ -1,13 +1,3 @@
-# testling
-
-Write tests for the browser or node.
-
-Run them with local browsers or hosted browsers from
-[testling.com](http://testling.com).
-
-# command-line usage
-
-```
 Usage:
 
   testling tunnel
@@ -31,14 +21,3 @@ testling OPTIONS [test files]
     --headless  For local browsers, run in headless mode.
                 Requires that you have the `Xvfb` command in $PATH.
 
-```
-
-# install
-
-With [npm](http://npmjs.org) just do:
-
-```
-npm install -g testling
-```
-
-![attack of the testlings!](http://substack.net/images/browsers/war_of_the_browsers.png)
