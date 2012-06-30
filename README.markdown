@@ -40,6 +40,30 @@ Your local browsers will be detected using
 
 To see a list of detected local browsers, do `testling --list=local`.
 
+To run your test on remote testling browsers, first open a testling tunnel:
+
+```
+$ testling tunnel
+# ssh -NR 57594:localhost:54046 me@example.com
+Enter passphrase for key '/home/substack/.ssh/id_dsa': 
+
+`` 
+
+then do:
+
+```
+$ testling example/test.js --browser=testling.chrome/12.0
+>> beep boop
+TAP version 13
+# json parse
+ok 1 should be equivalent
+
+1..1
+# tests 1
+# pass  1
+
+# ok
+```
 
 # command-line usage
 
@@ -47,12 +71,17 @@ To see a list of detected local browsers, do `testling --list=local`.
 Usage:
 
   testling tunnel
+  testling --list=TYPE
   testling OPTIONS [test files]
 
 testling tunnel
 
   Open a testling ssh tunnel. This step is necessary before using testling
   browsers.
+  
+testling --list=TYPE
+
+  List TYPE browsers. Available TYPEs: local.
 
 testling OPTIONS [test files]
 
