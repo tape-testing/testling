@@ -38,7 +38,15 @@ ok 1 should be equivalent
 Your local browsers will be detected using
 [browser-launcher](https://github.com/substack/browser-launcher).
 
-To see a list of detected local browsers, do `testling --list=local`.
+To see a list of detected local browsers, do `testling list`:
+
+```
+$ testling list
+chrome/17.0.963.12
+chromium/18.0.1025.168
+phantom/1.4.0
+firefox/12.0
+```
 
 To run your test on remote testling browsers, first open a testling tunnel:
 
@@ -89,7 +97,7 @@ Log a message to the output.
 Usage:
 
   testling tunnel
-  testling --list=TYPE
+  testling list
   testling OPTIONS [test files]
 
 testling tunnel
@@ -97,9 +105,9 @@ testling tunnel
   Open a testling ssh tunnel. This step is necessary before using testling
   browsers.
   
-testling --list=TYPE
+testling list
 
-  List TYPE browsers. Available TYPEs: local.
+  List local available browsers.
 
 testling OPTIONS [test files]
 
