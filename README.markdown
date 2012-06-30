@@ -65,6 +65,24 @@ ok 1 should be equivalent
 # ok
 ```
 
+# test api
+
+``` js
+var test = require('testling')
+```
+
+The test api is just the [node-tap](https://github.com/isaacs/node-tap) api
+plus:
+
+## t.createWindow(uri, vars, cb)
+
+Return a [schoolbus](https://github.com/substack/schoolbus) object to drive
+around web pages.
+
+## t.log(msg)
+
+Log a message to the output.
+
 # command-line usage
 
 ```
