@@ -11,6 +11,16 @@ var argv = require('optimist')
     .default('server', 'localhost:54046')
     .argv
 ;
+if (argv.list === 'local') {
+    launcher.config.read(function (err, cfg) {
+        if (err) return console.error(err);
+        cfg.browsers.local.forEach(function (browser) {
+            console.log(browser.name);
+        });
+    });
+    return;
+}
+
 argv.files = argv.files || argv._;
 if (argv.files.length === 0) {
     fs.createReadStream(__dirname + '/usage.txt').pipe(process.stdout);

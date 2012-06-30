@@ -5,6 +5,42 @@ Write tests for the browser or node.
 Run them with local browsers or hosted browsers from
 [testling.com](http://testling.com).
 
+# example
+
+Just write a simple test:
+
+``` js
+var test = require('testling');
+
+test('json parse', function (t) {
+    t.same(JSON.parse('[1,2]'), [1,2]);
+    t.log('beep boop');
+    t.end();
+});
+```
+
+then run it with a local browser:
+
+```
+$ testling example/test.js --browser=chrome
+>> beep boop
+TAP version 13
+# json parse
+ok 1 should be equivalent
+
+1..1
+# tests 1
+# pass  1
+
+# ok
+```
+
+Your local browsers will be detected using
+[browser-launcher](https://github.com/substack/browser-launcher).
+
+To see a list of detected local browsers, do `testling --list=local`.
+
+
 # command-line usage
 
 ```
