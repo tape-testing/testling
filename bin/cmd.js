@@ -14,8 +14,13 @@ var argv = require('optimist')
     .argv
 ;
 if (argv._[0] === 'list') {
-    launcher.config.read(function (err, cfg) {
+    launcher.config.read(function show (err, cfg) {
         if (err) return console.error(err);
+        if (!cfg) {
+            console.error('# detecting browsers for the first time');
+            return launcher.setup(show);
+        }
+        
         cfg.browsers.local.forEach(function (browser) {
             console.log(browser.name + '/' + browser.version);
         });
@@ -39,7 +44,7 @@ if (argv.browser === 'node') {
     return;
 }
 
-createServers(argv, function (uri, ports) {
+createServers(argv, function (uri, ports, servers) {
     if (argv.browser === 'echo') {
         console.log([
             uri, '  proxy:     localhost:' + ports.proxy
@@ -75,8 +80,8 @@ createServers(argv, function (uri, ports) {
         launch(uri, opts, function (err, ps) {
             if (err) return console.error(err);
             ps.on('exit', function () {
-                server.close();
-                proxy.close();
+                servers.web.close();
+                servers.proxy.close();
             });
         });
     });
