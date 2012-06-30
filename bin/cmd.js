@@ -4,11 +4,13 @@ var launcher = require('browser-launcher');
 var testlingVisit = require('../lib/testling/visit');
 var createServers = require('../lib/servers');
 var fs = require('fs');
+var spawn = require('child_process').spawn;
 
 var argv = require('optimist')
     .option('headless', { default : true, type : 'boolean' })
     .default('proxy', 'localhost:54045')
     .default('server', 'localhost:54046')
+    .default('browser', 'node')
     .argv
 ;
 if (argv._[0] === 'list') {
@@ -29,6 +31,13 @@ if (argv.files.length === 0) {
 
 var tunnel = require('../lib/testling/tunnel');
 if (argv._[0] === 'tunnel') return tunnel(argv.server);
+
+if (argv.browser === 'node') {
+    var args = [ __dirname + '/../node_modules/.bin/tap' ]
+        .concat(argv.files);
+    spawn(process.execPath, args, { customFds : [ 0, 1, 2 ] });
+    return;
+}
 
 createServers(argv, function (uri, ports) {
     if (argv.browser === 'echo') {
