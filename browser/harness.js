@@ -7,6 +7,7 @@ var output = require('./output');
 module.exports = function () {
     var harness = new Harness(Test);
     harness.test = harness.test.bind(harness);
+    harness.test.stream = output;
     harness.plan = harness.plan.bind(harness);
     
     harness.on('childEnd', function (child) {
