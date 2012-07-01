@@ -1,2 +1,1 @@
-var tap = require('tap');
-module.exports = tap.test;
+module.exports = require('./lib/harness')().test;
