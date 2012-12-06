@@ -53,7 +53,7 @@ To run your test on remote testling browsers, first open a testling tunnel:
 ```
 $ testling tunnel
 # ssh -NR 57594:localhost:54046 me@example.com
-Enter passphrase for key '/home/substack/.ssh/id_dsa': 
+Enter passphrase for key '/home/substack/.ssh/id_dsa':
 
 ```
 
@@ -104,7 +104,7 @@ testling tunnel
 
   Open a testling ssh tunnel. This step is necessary before using testling
   browsers.
-  
+
 testling list
 
   List local available browsers.
@@ -112,7 +112,7 @@ testling list
 testling OPTIONS [test files]
 
   Run the test files in the given browser.
-  
+
   OPTIONS:
 
     --browser   Run the tests with this browser. Prepend 'testling.' to run your
@@ -121,6 +121,7 @@ testling OPTIONS [test files]
 
     --headless  For local browsers, run in headless mode.
                 Requires that you have the `Xvfb` command in $PATH.
+                true by default
 
 ```
 
