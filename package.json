@@ -22,7 +22,7 @@
     "test": "test"
   },
   "scripts": {
-    "install": "browserify node_modules/schoolbus/proxy.js -o static/proxy.js && cp node_modules/mocha/mocha.js static/mocha.js"
+    "install": "mkdir static && browserify node_modules/schoolbus/proxy.js -o static/proxy.js && cp node_modules/mocha/mocha.js static/mocha.js"
   },
   "dependencies": {
     "bouncy": "~1.3.1",
