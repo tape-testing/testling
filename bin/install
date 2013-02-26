@@ -1,0 +1,9 @@
+#!/bin/bash
+
+mkdir static 
+browserify node_modules/schoolbus/proxy.js -o static/proxy.js 
+if [ -e "node_modules/mocha/mocha.js" ]; then
+  cp node_modules/mocha/mocha.js static/mocha.js
+else
+  cp ../mocha/mocha.js static/mocha.js
+fi
