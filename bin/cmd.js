@@ -6,6 +6,7 @@ var createServers = require('../lib/servers');
 var fs = require('fs');
 var spawn = require('child_process').spawn;
 var exec = require('child_process').exec;
+var util = require('util')
 var browser;
 
 var argv = require('optimist')
@@ -47,6 +48,11 @@ if (argv.browser === 'node') {
 }
 
 createServers(argv, function (uri, ports, servers) {
+    if (util.isError(uri)) {
+        console.error('Error creating servers: ', uri.stack);
+        process.exit(1);
+        return;
+    }
     if (argv.browser === 'echo') {
         console.log([
             uri, '  proxy:     localhost:' + ports.proxy

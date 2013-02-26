@@ -33,7 +33,6 @@
     "optimist": "~0.3.4",
     "mkdirp": "~0.3.3",
     "tap": "~0.2.5",
-    "browserify": "~1.13.3",
     "shoe": "~0.0.2",
     "event-stream": "~2.0.4",
     "JSONStream": "~0.3.0",
@@ -41,7 +40,8 @@
     "promzard": "~0.1.5",
     "pw": "~0.0.3",
     "browser-launcher": "~0.2.0",
-    "mocha": "~1.8.1"
+    "mocha": "~1.8.1",
+    "browserify": "~2.2.5"
   },
   "engines": {
     "node": ">=0.6"
