@@ -5,6 +5,9 @@ var testlingVisit = require('../lib/testling/visit');
 var createServers = require('../lib/servers');
 var fs = require('fs');
 var spawn = require('child_process').spawn;
+var exec = require('child_process').exec;
+var util = require('util')
+var browser;
 
 var argv = require('optimist')
     .option('headless', { default : true, type : 'boolean' })
@@ -45,6 +48,11 @@ if (argv.browser === 'node') {
 }
 
 createServers(argv, function (uri, ports, servers) {
+    if (util.isError(uri)) {
+        console.error('Error creating servers: ', uri.stack);
+        process.exit(1);
+        return;
+    }
     if (argv.browser === 'echo') {
         console.log([
             uri, '  proxy:     localhost:' + ports.proxy
@@ -77,6 +85,10 @@ createServers(argv, function (uri, ports, servers) {
             proxy : 'localhost:' + ports.proxy,
             noProxy : 'localhost:' + ports.server,
         };
+        launch.browsers.local.forEach(function(b) {
+          if (browser) return;
+          if (b.name === opts.browser) browser = b;
+        });
         launch(uri, opts, function (err, ps) {
             if (err) return console.error(err);
             ps.on('exit', function () {
@@ -85,4 +97,13 @@ createServers(argv, function (uri, ports, servers) {
             });
         });
     });
+}, function() {
+    killBrowser(browser);
+    process.exit();
 });
+
+
+function killBrowser(browser) {
+  if (!browser || browser.name !== 'chrome') return
+  var child = exec("kill $(ps -A | grep '" + browser.profile + "' | grep -v 'open' | grep -v 'Help' | grep -v 'grep' | awk '{print $1}')", function() { });
+}
