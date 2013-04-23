@@ -8,30 +8,33 @@ write a test:
 
 ``` js
 var test = require('tape');
-var myCode = require('../my_code.js');
 
-test('make sure my code works', function (t) {
-  t.plan(2);
-  t.equal(myCode.beep(5), 555);
-  
-  myCode.boop(333, function (n) {
-    t.equal(n, 3);
-  });
+test('beep boop', function (t) {
+    t.plan(2);
+    t.equal(1+1, 2);
+    t.ok(true);
 });
 ```
 
-configure your package.json and set up a web hook:
+run your test in a local headless browser:
 
 ```
-$ testling init
+$ browserify example/test.js | testling
+
+TAP version 13
+# beep boop
+ok 1 should be equal
+ok 2 (unnamed assert)
+
+1..2
+# tests 2
+# pass  2
+
+# ok
 ```
 
-run your tests locally:
-
-```
-$ testling
-```
-
+with an exit code of 0 for successes and non-zero for failures like a good unix
+citizen
 
 # install
 
@@ -40,5 +43,9 @@ With [npm](http://npmjs.org) just do:
 ```
 npm install -g testling
 ```
+
+# license
+
+MIT
 
 ![attack of the testlings!](http://substack.net/images/browsers/war_of_the_browsers.png)
