@@ -16,22 +16,17 @@
         "browser",
         "headless"
     ],
-    "directories" : {
-        "lib" : ".",
-        "example" : "example",
-        "test" : "test"
-    },
     "scripts" : {
         "prepublish" : "mkdir -p bundle && browserify browser/prelude -o bundle/prelude.js"
     },
     "dependencies" : {
-        "browser-launcher" : "~0.2.0",
         "jsonify" : "~0.0.0",
         "optimist" : "~0.4.0",
         "xhr-write-stream" : "~0.1.2",
         "concat-stream" : "~0.1.1",
         "tap-finished" : "~0.0.0"
     },
+    "bundledDependencies" : [ "browser-launcher" ],
     "engines" : {
         "node" : ">=0.6"
     },
