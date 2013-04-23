@@ -27,6 +27,9 @@
         "tap-finished" : "~0.0.0"
     },
     "bundledDependencies" : [ "browser-launcher" ],
+    "devDependencies": {
+        "tape": "~0.3.3"
+    },
     "engines" : {
         "node" : ">=0.6"
     },
