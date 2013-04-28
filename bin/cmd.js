@@ -32,11 +32,14 @@ var server = http.createServer(function (req, res) {
         req.on('end', res.end.bind(res));
     }
     else if (req.url === '/') {
-        res.setHeader('content-type', 'text/html');
-        res.end('<html><body><script src="/bundle.js"></script></body></html>');
+        res.setHeader('content-type', 'text/html; charset=utf-8');
+        res.end('<!DOCTYPE html>'
+              + '<html><head><meta charset="utf-8"></head>'
+              + '<body><script src="/bundle.js"></script></body>'
+              + '</html>');
     }
     else if (req.url === '/bundle.js') {
-        res.setHeader('content-type', 'application/javascript');
+        res.setHeader('content-type', 'application/javascript; charset=utf-8');
         res.end(prelude + '\n' + src);
     }
 });
