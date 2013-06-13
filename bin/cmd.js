@@ -9,7 +9,7 @@ var fs = require('fs');
 var path = require('path');
 var prelude = fs.readFileSync(__dirname + '/../bundle/prelude.js', 'utf8');
 
-var src, launch;
+var src, launch, html;
 var pending = 3;
 
 if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
@@ -32,9 +32,19 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
         return;
     }
     
-    console.dir(pkg);
+    if (!pkg.testling) {
+        console.error(
+            'The "testling" field isn\'t present '
+            + 'in ' + path.join(dir, 'package.json') + '.\n'
+            + 'This field is required by testling. Please consult:\n'
+            + 'https://ci.testling.com/guide/quick_start'
+        );
+        return;
+    }
+    console.dir(pkg.testling);
 }
 else {
+    html = '<html><body><script src="/bundle.js"></script></body></html>';
     process.stdin.pipe(concat(function (err, src_) {
         src = src_;
         if (--pending === 0) ready();
@@ -58,7 +68,7 @@ var server = http.createServer(function (req, res) {
     }
     else if (req.url === '/') {
         res.setHeader('content-type', 'text/html');
-        res.end('<html><body><script src="/bundle.js"></script></body></html>');
+        res.end(html);
     }
     else if (req.url === '/bundle.js') {
         res.setHeader('content-type', 'application/javascript');
