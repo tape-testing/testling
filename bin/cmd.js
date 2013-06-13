@@ -6,15 +6,40 @@ var finished = require('tap-finished');
 var argv = require('optimist').argv;
 
 var fs = require('fs');
+var path = require('path');
 var prelude = fs.readFileSync(__dirname + '/../bundle/prelude.js', 'utf8');
 
 var src, launch;
 var pending = 3;
 
-process.stdin.pipe(concat(function (err, src_) {
-    src = src_;
-    if (--pending === 0) ready();
-}));
+if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
+    var dir = path.resolve(argv._.shift() || process.cwd());
+    
+    try {
+        var pkg = require(path.join(dir, 'package.json'));
+    }
+    catch (err) {
+        if (err.code === 'MODULE_NOT_FOUND') {
+            console.error(
+                'No package.json in ' + dir + ' found.\n'
+                + 'Consult the quick start guide for how to create one:\n'
+                + 'https://ci.testling.com/guide/quick_start'
+            );
+        }
+        else {
+            console.error(err.message);
+        }
+        return;
+    }
+    
+    console.dir(pkg);
+}
+else {
+    process.stdin.pipe(concat(function (err, src_) {
+        src = src_;
+        if (--pending === 0) ready();
+    }));
+}
 
 var xws = require('xhr-write-stream')();
 
