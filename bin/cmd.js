@@ -1,20 +1,23 @@
 #!/usr/bin/env node
 var http = require('http');
+var spawn = require('child_process').spawn;
 var launcher = require('browser-launcher');
 var concat = require('concat-stream');
 var finished = require('tap-finished');
 var argv = require('optimist').argv;
 
+var unglob = require('../lib/unglob.js');
+
 var fs = require('fs');
 var path = require('path');
 var prelude = fs.readFileSync(__dirname + '/../bundle/prelude.js', 'utf8');
 
-var src, launch, html;
+var bundle, launch, html;
 var pending = 3;
+var dir = path.resolve(argv._.shift() || process.cwd());
+var ecstatic = require('ecstatic')(dir);
 
 if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
-    var dir = path.resolve(argv._.shift() || process.cwd());
-    
     try {
         var pkg = require(path.join(dir, 'package.json'));
     }
@@ -41,12 +44,52 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
         );
         return;
     }
-    console.dir(pkg.testling);
+    var bundleId = Math.floor(Math.pow(16,8)*Math.random()).toString(16);
+    
+    if (pkg.testling.preprocess) {
+        // todo
+    }
+    else if (pkg.testling.files) {
+        unglob(dir, pkg.testling, function (err, expanded) {
+            if (err) return console.error(err);
+            process.env.PATH = path.resolve(dir, 'node_modules/.bin')
+                + ':' + process.env.PATH
+            ;
+            ++ pending;
+            var args = [ '-o', bundleId+'.js' ].concat(expanded.file);
+            var ps = spawn('browserify', args, { cwd: dir });
+            ps.stdout.pipe(process.stdout);
+            ps.stderr.pipe(process.stderr);
+            ps.on('exit', function (code) {
+                if (code !== 0) {
+                    console.error('FAILURE: non-zero exit code');
+                }
+                else if (--pending === 0) ready();
+            });
+        });
+    }
+    
+    if (pkg.testling.html) {
+        pending ++;
+        fs.readFile(path.join(dir, pkg.testling.html), function (err, src) {
+            if (err) console.error('while loading testling.html: ' + err);
+            else {
+                html = src;
+                if (--pending === 0) ready();
+            }
+        });
+    }
+    else {
+        html = '<html><body>'
+            + '<script src="/' + bundleId + '.js"></script>'
+            + '</body></html>'
+        ;
+    }
 }
 else {
     html = '<html><body><script src="/bundle.js"></script></body></html>';
-    process.stdin.pipe(concat(function (err, src_) {
-        src = src_;
+    process.stdin.pipe(concat(function (err, src) {
+        bundle = src;
         if (--pending === 0) ready();
     }));
 }
@@ -66,13 +109,16 @@ var server = http.createServer(function (req, res) {
         }));
         req.on('end', res.end.bind(res));
     }
-    else if (req.url === '/') {
+    else if (html && req.url === '/') {
         res.setHeader('content-type', 'text/html');
         res.end(html);
     }
     else if (req.url === '/bundle.js') {
         res.setHeader('content-type', 'application/javascript');
-        res.end(prelude + '\n' + src);
+        res.end(prelude + '\n' + bundle);
+    }
+    else {
+        ecstatic(req, res);
     }
 });
 
