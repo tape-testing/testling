@@ -13,7 +13,7 @@ var path = require('path');
 var prelude = fs.readFileSync(__dirname + '/../bundle/prelude.js', 'utf8');
 
 var bundle, launch, html;
-var pending = 2;
+var pending = 3;
 var dir = path.resolve(argv._.shift() || process.cwd());
 var ecstatic = require('ecstatic')(dir);
 var resolve = require('resolve').sync;
@@ -51,7 +51,6 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
         // todo
     }
     else {
-        ++ pending;
         unglob(dir, pkg.testling, function (err, expanded) {
             if (err) return console.error(err);
             process.env.PATH = path.resolve(dir, 'node_modules/.bin')
@@ -98,6 +97,7 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
         }
         
         html = '<html><body>'
+            + '<script src="/__testling_prelude.js"></script>'
             + before
             + '<script src="/' + bundleId + '.js"></script>'
             + after
@@ -132,6 +132,10 @@ var server = http.createServer(function (req, res) {
         res.setHeader('content-type', 'text/html');
         res.end(html);
     }
+    else if (req.url === '/__testling_prelude.js') {
+        res.setHeader('content-type', 'application/javascript');
+        res.end(prelude);
+    }
     else if (req.url === '/bundle.js') {
         res.setHeader('content-type', 'application/javascript');
         res.end(prelude + '\n' + bundle);
@@ -157,8 +161,6 @@ function ready () {
         browser: launch.browsers.local[0].name
     };
     var href = 'http://localhost:' + server.address().port + '/';
-    console.log(href);
-    return;
     launch(href, opts, function (err, ps) {
         if (err) return console.error(err);
         if (--pending === 0) ready();
