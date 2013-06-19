@@ -56,7 +56,7 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
             process.env.PATH = path.resolve(dir, 'node_modules/.bin')
                 + ':' + process.env.PATH
             ;
-            var args = [ '-o', bundleId+'.js' ].concat(expanded.file);
+            var args = [ '-d', '-o', bundleId+'.js' ].concat(expanded.file);
             var ps = spawn('browserify', args, { cwd: dir });
             ps.stdout.pipe(process.stdout);
             ps.stderr.pipe(process.stderr);
