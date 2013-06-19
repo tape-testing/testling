@@ -13,7 +13,7 @@ var path = require('path');
 var prelude = fs.readFileSync(__dirname + '/../bundle/prelude.js', 'utf8');
 
 var bundle, launch, html;
-var pending = 3;
+var pending = 2;
 var dir = path.resolve(argv._.shift() || process.cwd());
 var ecstatic = require('ecstatic')(dir);
 
@@ -49,13 +49,13 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
     if (pkg.testling.preprocess) {
         // todo
     }
-    else if (pkg.testling.files) {
+    else {
+        ++ pending;
         unglob(dir, pkg.testling, function (err, expanded) {
             if (err) return console.error(err);
             process.env.PATH = path.resolve(dir, 'node_modules/.bin')
                 + ':' + process.env.PATH
             ;
-            ++ pending;
             var args = [ '-o', bundleId+'.js' ].concat(expanded.file);
             var ps = spawn('browserify', args, { cwd: dir });
             ps.stdout.pipe(process.stdout);
@@ -65,6 +65,7 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
                     console.error('FAILURE: non-zero exit code');
                 }
                 else if (--pending === 0) ready();
+console.log('pending=' + pending);
             });
         });
     }
