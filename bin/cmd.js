@@ -16,6 +16,7 @@ var bundle, launch, html;
 var pending = 2;
 var dir = path.resolve(argv._.shift() || process.cwd());
 var ecstatic = require('ecstatic')(dir);
+var resolve = require('resolve').sync;
 
 if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
     try {
@@ -65,7 +66,6 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
                     console.error('FAILURE: non-zero exit code');
                 }
                 else if (--pending === 0) ready();
-console.log('pending=' + pending);
             });
         });
     }
@@ -81,8 +81,26 @@ console.log('pending=' + pending);
         });
     }
     else {
+        var before = '', after = '';
+        if (/^mocha(-|$)/.test(pkg.testling.harness)) {
+            var mochaFile = path.relative(dir,
+                resolve('mocha/mocha.js', { basedir: dir })
+            );
+            var m = /^mocha-(\w+)/.exec(pkg.testling.harness);
+            var ui = m && m[1] || 'bdd';
+            before =
+                '<script src="' + mochaFile + '"></script>'
+                + '<script>mocha.setup(' + JSON.stringify({
+                    ui: ui, reporter: 'tap'
+                }) + ')</script>';
+            ;
+            after = '<script>mocha.run()</script>';
+        }
+        
         html = '<html><body>'
+            + before
             + '<script src="/' + bundleId + '.js"></script>'
+            + after
             + '</body></html>'
         ;
     }
@@ -139,6 +157,8 @@ function ready () {
         browser: launch.browsers.local[0].name
     };
     var href = 'http://localhost:' + server.address().port + '/';
+    console.log(href);
+    return;
     launch(href, opts, function (err, ps) {
         if (err) return console.error(err);
         if (--pending === 0) ready();
