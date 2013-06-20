@@ -4,6 +4,7 @@ var spawn = require('child_process').spawn;
 var launcher = require('browser-launcher');
 var concat = require('concat-stream');
 var finished = require('tap-finished');
+var parseCommand = require('shell-quote').parse;
 var argv = require('optimist').argv;
 
 var unglob = require('../lib/unglob.js');
@@ -64,7 +65,7 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
                 if (code !== 0) {
                     console.error('FAILURE: non-zero exit code');
                 }
-                else if (--pending === 0) ready();
+                else ready();
             });
         });
     }
@@ -75,7 +76,7 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
             if (err) console.error('while loading testling.html: ' + err);
             else {
                 html = src;
-                if (--pending === 0) ready();
+                ready();
             }
         });
     }
@@ -107,9 +108,9 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
 }
 else {
     html = '<html><body><script src="/bundle.js"></script></body></html>';
-    process.stdin.pipe(concat(function (err, src) {
+    process.stdin.pipe(concat(function (src) {
         bundle = src;
-        if (--pending === 0) ready();
+        ready();
     }));
 }
 
@@ -145,24 +146,47 @@ var server = http.createServer(function (req, res) {
     }
 });
 
-server.listen(0, function () {
-    if (--pending === 0) ready();
-});
+server.listen(0, ready);
 
-launcher(function (err, launch_) {
-    if (err) return console.error(err);
-    launch = launch_;
-    if (--pending === 0) ready();
-});
+if (argv.u || argv.cmd) {
+    ready();
+}
+else {
+    launcher(function (err, launch_) {
+        if (err) return console.error(err);
+        launch = launch_;
+        ready();
+    });
+}
 
 function ready () {
+    if (--pending !== 0) return;
+    
     var opts = {
         headless: true,
         browser: launch.browsers.local[0].name
     };
     var href = 'http://localhost:' + server.address().port + '/';
-    launch(href, opts, function (err, ps) {
-        if (err) return console.error(err);
-        if (--pending === 0) ready();
-    });
+    if (argv.u) {
+        console.log(href);
+    }
+    else if (argv.bcmd) {
+        var cmd = parseCommand(argv.bcmd);
+        var ps = spawn(cmd[0], cmd.slice(1).concat(href));
+        ps.stderr.pipe(process.stderr);
+        ps.stdout.pipe(process.stderr);
+        ps.on('exit', function (code) {
+            if (code !== 0) {
+                console.error(
+                    'Command ' + JSON.stringify(argv.bcmd)
+                    + ' terminated with non-zero exit code'
+                );
+            }
+        });
+    }
+    else {
+        launch(href, opts, function (err, ps) {
+            if (err) return console.error(err);
+        });
+    }
 }
