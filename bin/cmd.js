@@ -5,11 +5,15 @@ var launcher = require('browser-launcher');
 var concat = require('concat-stream');
 var finished = require('tap-finished');
 var parseCommand = require('shell-quote').parse;
+var fs = require('fs');
+
 var argv = require('optimist').argv;
+if (argv.h || argv.help) {
+    return fs.createReadStream(__dirname + '/usage.txt').pipe(process.stdout);
+}
 
 var unglob = require('../lib/unglob.js');
 
-var fs = require('fs');
 var path = require('path');
 var prelude = fs.readFileSync(__dirname + '/../bundle/prelude.js', 'utf8');
 
