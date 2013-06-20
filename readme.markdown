@@ -36,6 +36,17 @@ ok 2 (unnamed assert)
 with an exit code of 0 for successes and non-zero for failures like a good unix
 citizen
 
+Once you have a `package.json` with a configured `"testling"` field, you can just
+do:
+
+```
+$ testling
+```
+
+to run all your tests locally just like they will be run on
+[testling-ci](https://ci.testling.com). This includes mocha harnesses, scripts,
+and files parameters.
+
 # install
 
 With [npm](http://npmjs.org) just do:
