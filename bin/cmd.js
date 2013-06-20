@@ -81,7 +81,7 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
         fs.readFile(path.join(dir, pkg.testling.html), function (err, src) {
             if (err) console.error('while loading testling.html: ' + err);
             else {
-                html = src;
+                html = '<script src="/__testling_prelude.js"></script>' + src;
                 ready();
             }
         });
