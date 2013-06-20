@@ -37,7 +37,7 @@ with an exit code of 0 for successes and non-zero for failures like a good unix
 citizen
 
 Once you have a `package.json` with a configured `"testling"` field, you can just
-do:
+type:
 
 ```
 $ testling

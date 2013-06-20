@@ -19,7 +19,7 @@ var prelude = fs.readFileSync(__dirname + '/../bundle/prelude.js', 'utf8');
 
 var bundle, launch, html;
 var pending = 3;
-var dir = path.resolve(argv._.shift() || process.cwd());
+var dir = path.resolve(argv._[0] === '-' ? false : argv._[0] || process.cwd());
 var ecstatic = require('ecstatic')(dir);
 var resolve = require('resolve').sync;
 
