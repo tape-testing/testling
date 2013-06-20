@@ -47,6 +47,27 @@ to run all your tests locally just like they will be run on
 [testling-ci](https://ci.testling.com). This includes mocha harnesses, scripts,
 and files parameters.
 
+# usage
+
+```
+usage: testling {DIRECTORY|-} {OPTIONS}
+
+If there (is no DIRECTORY and stdin is a tty) or the DIRECTORY is "-",
+javascript will be read from stdin and executed.
+
+Otherwise, DIRECTORY (or the $CWD) will be checked for a package.json with a
+testling field.
+
+OPTIONS are:
+
+  --bcmd  Launch a browser with an explicit command. By default, chrome or
+          firefox is launched by searching your $PATH.
+
+      -u  Instead of launching a browser, print the url to visit so you can open
+          the browser yourself.
+
+```
+
 # install
 
 With [npm](http://npmjs.org) just do:
