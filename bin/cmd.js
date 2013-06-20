@@ -5,6 +5,7 @@ var launcher = require('browser-launcher');
 var concat = require('concat-stream');
 var finished = require('tap-finished');
 var parseCommand = require('shell-quote').parse;
+var ent = require('ent');
 var fs = require('fs');
 
 var argv = require('optimist').argv;
@@ -18,6 +19,7 @@ var path = require('path');
 var prelude = fs.readFileSync(__dirname + '/../bundle/prelude.js', 'utf8');
 
 var bundle, launch, html;
+var scripts = [];
 var pending = 3;
 var dir = path.resolve(argv._[0] === '-' ? false : argv._[0] || process.cwd());
 var ecstatic = require('ecstatic')(dir);
@@ -55,12 +57,14 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
     if (pkg.testling.preprocess) {
         // todo
     }
-    else {
+    else if (!pkg.testling.html) {
         unglob(dir, pkg.testling, function (err, expanded) {
             if (err) return console.error(err);
             process.env.PATH = path.resolve(dir, 'node_modules/.bin')
                 + ':' + process.env.PATH
             ;
+            scripts = expanded.scripts;
+            
             var args = expanded.file.concat('--debug');
             var ps = spawn('browserify', args, { cwd: dir });
             ps.stdout.pipe(concat(function (src) {
@@ -77,7 +81,6 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
     }
     
     if (pkg.testling.html) {
-        pending ++;
         fs.readFile(path.join(dir, pkg.testling.html), function (err, src) {
             if (err) console.error('while loading testling.html: ' + err);
             else {
@@ -98,7 +101,7 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
                 '<script src="' + mochaFile + '"></script>'
                 + '<script>mocha.setup(' + JSON.stringify({
                     ui: ui, reporter: 'tap'
-                }) + ')</script>';
+                }) + ')</script>'
             ;
             after = '<script>mocha.run()</script>';
         }
@@ -106,6 +109,9 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
         html = '<html><body>'
             + '<script src="/__testling_prelude.js"></script>'
             + before
+            + scripts.map(function (s) {
+                return '<script src="' + ent.encode(s) + '"></script>'
+            }).join('\n')
             + '<script src="/__testling_bundle.js"></script>'
             + after
             + '</body></html>'
