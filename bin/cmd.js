@@ -61,9 +61,11 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
             process.env.PATH = path.resolve(dir, 'node_modules/.bin')
                 + ':' + process.env.PATH
             ;
-            var args = [ '-d', '-o', bundleId+'.js' ].concat(expanded.file);
+            var args = expanded.file.concat('--debug');
             var ps = spawn('browserify', args, { cwd: dir });
-            ps.stdout.pipe(process.stdout);
+            ps.stdout.pipe(concat(function (src) {
+                bundle = src;
+            }));
             ps.stderr.pipe(process.stderr);
             ps.on('exit', function (code) {
                 if (code !== 0) {
@@ -104,14 +106,18 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
         html = '<html><body>'
             + '<script src="/__testling_prelude.js"></script>'
             + before
-            + '<script src="/' + bundleId + '.js"></script>'
+            + '<script src="/__testling_bundle.js"></script>'
             + after
             + '</body></html>'
         ;
     }
 }
 else {
-    html = '<html><body><script src="/bundle.js"></script></body></html>';
+    html = '<html><body>'
+        + '<script src="/__testling_prelude.js"></script>'
+        + '<script src="/__testling_bundle.js"></script>'
+        + '</body></html>'
+    ;
     process.stdin.pipe(concat(function (src) {
         bundle = src;
         ready();
@@ -141,9 +147,9 @@ var server = http.createServer(function (req, res) {
         res.setHeader('content-type', 'application/javascript');
         res.end(prelude);
     }
-    else if (req.url === '/bundle.js') {
+    else if (req.url === '/__testling_bundle.js') {
         res.setHeader('content-type', 'application/javascript');
-        res.end(prelude + '\n' + bundle);
+        res.end(bundle);
     }
     else {
         ecstatic(req, res);
@@ -168,7 +174,7 @@ function ready () {
     
     var opts = {
         headless: true,
-        browser: launch.browsers.local[0].name
+        browser: launch && launch.browsers.local[0].name
     };
     var href = 'http://localhost:' + server.address().port + '/';
     if (argv.u) {
