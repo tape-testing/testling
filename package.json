@@ -25,11 +25,11 @@
         "xhr-write-stream" : "~0.1.2",
         "concat-stream" : "~1.0.0",
         "tap-finished" : "~0.0.0",
-        "ecstatic": "~0.4.5"
+        "ecstatic": "~0.4.5",
         "browser-launcher": "~0.2.0",
         "resolve": "~0.4.0",
         "glob": "~3.2.1",
-        "shell-quote": "~1.3.1",
+        "shell-quote": "~1.3.1"
     },
     "bundledDependencies" : [ "browser-launcher" ],
     "devDependencies": {
