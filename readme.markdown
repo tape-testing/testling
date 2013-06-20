@@ -47,6 +47,10 @@ to run all your tests locally just like they will be run on
 [testling-ci](https://ci.testling.com). This includes mocha harnesses, scripts,
 and files parameters.
 
+*Note:* to use `testling` locally you will need to have your preferred version
+    of browserify available as a command. You can do this by installing it
+    globally using `npm install -g browserify`
+
 # install
 
 With [npm](http://npmjs.org) just do:
