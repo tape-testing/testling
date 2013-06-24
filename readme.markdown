@@ -70,7 +70,14 @@ OPTIONS are:
 
 # install
 
-With [npm](http://npmjs.org) just do:
+First, install `browserify` globally so that the `testling` command can find it
+when there is no `browserify` in `./node_modules/.bin`:
+
+```
+npm install -g browserify
+```
+
+then do:
 
 ```
 npm install -g testling
