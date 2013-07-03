@@ -18,7 +18,7 @@ var unglob = require('../lib/unglob.js');
 var path = require('path');
 var prelude = fs.readFileSync(__dirname + '/../bundle/prelude.js', 'utf8');
 
-var bundle, launch, html;
+var bundle, launch;
 var scripts = [];
 var pending = 3;
 var dir = path.resolve(argv._[0] === '-' ? false : argv._[0] || process.cwd());
@@ -63,67 +63,28 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
             process.env.PATH = path.resolve(dir, 'node_modules/.bin')
                 + ':' + process.env.PATH
             ;
-            scripts = expanded.scripts;
+            scripts = expanded.script;
             
-            var args = expanded.file.concat('--debug');
-            var ps = spawn('browserify', args, { cwd: dir });
-            ps.stdout.pipe(concat(function (src) {
-                bundle = src;
-            }));
-            ps.stderr.pipe(process.stderr);
-            ps.on('exit', function (code) {
-                if (code !== 0) {
-                    console.error('FAILURE: non-zero exit code');
-                }
-                else ready();
-            });
+            if (expanded.file.length) {
+                var args = expanded.file.concat('--debug');
+                var ps = spawn('browserify', args, { cwd: dir });
+                ps.stdout.pipe(concat(function (src) {
+                    bundle = src;
+                }));
+                ps.stderr.pipe(process.stderr);
+                ps.on('exit', function (code) {
+                    if (code !== 0) {
+                        console.error('FAILURE: non-zero exit code');
+                    }
+                    else ready();
+                });
+            }
+            else ready();
         });
     }
     
-    if (pkg.testling.html) {
-        fs.readFile(path.join(dir, pkg.testling.html), function (err, src) {
-            if (err) console.error('while loading testling.html: ' + err);
-            else {
-                html = '<script src="/__testling_prelude.js"></script>' + src;
-                ready();
-            }
-        });
-    }
-    else {
-        var before = '', after = '';
-        if (/^mocha(-|$)/.test(pkg.testling.harness)) {
-            var mochaFile = path.relative(dir,
-                resolve('mocha/mocha.js', { basedir: dir })
-            );
-            var m = /^mocha-(\w+)/.exec(pkg.testling.harness);
-            var ui = m && m[1] || 'bdd';
-            before =
-                '<script src="' + mochaFile + '"></script>'
-                + '<script>mocha.setup(' + JSON.stringify({
-                    ui: ui, reporter: 'tap'
-                }) + ')</script>'
-            ;
-            after = '<script>mocha.run()</script>';
-        }
-        
-        html = '<html><body>'
-            + '<script src="/__testling_prelude.js"></script>'
-            + before
-            + scripts.map(function (s) {
-                return '<script src="' + ent.encode(s) + '"></script>'
-            }).join('\n')
-            + '<script src="/__testling_bundle.js"></script>'
-            + after
-            + '</body></html>'
-        ;
-    }
 }
 else {
-    html = '<html><body>'
-        + '<script src="/__testling_prelude.js"></script>'
-        + '<script src="/__testling_bundle.js"></script>'
-        + '</body></html>'
-    ;
     process.stdin.pipe(concat(function (src) {
         bundle = src;
         ready();
@@ -145,9 +106,9 @@ var server = http.createServer(function (req, res) {
         }));
         req.on('end', res.end.bind(res));
     }
-    else if (html && req.url === '/') {
+    else if (req.url === '/') {
         res.setHeader('content-type', 'text/html');
-        res.end(html);
+        getHTML(function (html) { res.end(html) });
     }
     else if (req.url === '/__testling_prelude.js') {
         res.setHeader('content-type', 'application/javascript');
@@ -205,4 +166,42 @@ function ready () {
             if (err) return console.error(err);
         });
     }
+}
+
+function getHTML (cb) {
+    if (pkg.testling.html) {
+        fs.readFile(path.join(dir, pkg.testling.html), function (err, src) {
+            if (err) console.error('while loading testling.html: ' + err);
+            else {
+                cb('<script src="/__testling_prelude.js"></script>' + src);
+            }
+        });
+        return;
+    }
+    var before = '', after = '';
+    if (/^mocha(-|$)/.test(pkg.testling.harness)) {
+        var mochaFile = path.relative(dir,
+            resolve('mocha/mocha.js', { basedir: dir })
+        );
+        var m = /^mocha-(\w+)/.exec(pkg.testling.harness);
+        var ui = m && m[1] || 'bdd';
+        before =
+            '<script src="' + mochaFile + '"></script>'
+            + '<script>mocha.setup(' + JSON.stringify({
+                ui: ui, reporter: 'tap'
+            }) + ')</script>'
+        ;
+        after = '<script>mocha.run()</script>';
+    }
+    
+    cb('<html><body>'
+        + '<script src="/__testling_prelude.js"></script>'
+        + before
+        + scripts.map(function (s) {
+            return '<script src="' + ent.encode(s) + '"></script>'
+        }).join('\n')
+        + '<script src="/__testling_bundle.js"></script>'
+        + after
+        + '</body></html>'
+    );
 }
