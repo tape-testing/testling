@@ -20,6 +20,7 @@ var prelude = fs.readFileSync(__dirname + '/../bundle/prelude.js', 'utf8');
 
 var bundle, launch;
 var scripts = [];
+var htmlQueue = [];
 var pending = 3;
 var dir = path.resolve(argv._[0] === '-' ? false : argv._[0] || process.cwd());
 var ecstatic = require('ecstatic')(dir);
@@ -70,6 +71,7 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
                 var ps = spawn('browserify', args, { cwd: dir });
                 ps.stdout.pipe(concat(function (src) {
                     bundle = src;
+                    htmlQueue.forEach(function (f) { getHTML(f) });
                 }));
                 ps.stderr.pipe(process.stderr);
                 ps.on('exit', function (code) {
@@ -87,11 +89,17 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
 else {
     process.stdin.pipe(concat(function (src) {
         bundle = src;
+        htmlQueue.forEach(function (f) { getHTML(f) });
         ready();
     }));
 }
 
 var xws = require('xhr-write-stream')();
+
+if (argv.html) {
+    getHTML(function (html) { console.log(html) });
+    return;
+}
 
 var server = http.createServer(function (req, res) {
     if (req.url === '/sock') {
@@ -169,11 +177,13 @@ function ready () {
 }
 
 function getHTML (cb) {
+    if (bundle === undefined) return htmlQueue.push(cb);
+    
     if (pkg.testling.html) {
         fs.readFile(path.join(dir, pkg.testling.html), function (err, src) {
             if (err) console.error('while loading testling.html: ' + err);
             else {
-                cb('<script src="/__testling_prelude.js"></script>' + src);
+                cb('<script>' + prelude + '</script>' + src);
             }
         });
         return;
@@ -195,12 +205,12 @@ function getHTML (cb) {
     }
     
     cb('<html><body>'
-        + '<script src="/__testling_prelude.js"></script>'
+        + '<script>' + prelude + '</script>'
         + before
         + scripts.map(function (s) {
             return '<script src="' + ent.encode(s) + '"></script>'
         }).join('\n')
-        + '<script src="/__testling_bundle.js"></script>'
+        + '<script>' + bundle + '</script>'
         + after
         + '</body></html>'
     );

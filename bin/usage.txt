@@ -14,3 +14,5 @@ OPTIONS are:
       -u  Instead of launching a browser, print the url to visit so you can open
           the browser yourself.
 
+  --html  Instead of launching a server, show the generated html.
+
