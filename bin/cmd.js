@@ -81,7 +81,17 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
                     else ready();
                 });
             }
-            else ready();
+            else if (expanded.script.length) {
+                ready();
+            }
+            else {
+                console.error(
+                    'No test files, no scripts, and no html parameter found'
+                    + 'after expanding the globs. At least one file or a custom'
+                    + 'html field is needed.'
+                );
+                process.exit(1);
+            }
         });
     }
     
