@@ -2,6 +2,7 @@
     var xws = require('xhr-write-stream');
     var Stream = require('stream');
     var json = typeof JSON === 'object' ? JSON : require('jsonify');
+    var util = require('util')
     
     process.on = function () {};
     var ws = xws('/sock');
@@ -77,8 +78,8 @@
           }
         } else {
           msg = [].map.call(arguments, function (v) {
-            return JSON.stringify(v, null, 2)
-          })
+            return util.inspect(v)
+          }).join(' ')
         }
 
         process.stdout.write(msg + '\n');
