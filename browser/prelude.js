@@ -2,6 +2,7 @@
     var xws = require('xhr-write-stream');
     var Stream = require('stream');
     var json = typeof JSON === 'object' ? JSON : require('jsonify');
+    var util = require('util')
     
     process.on = function () {};
     var ws = xws('/sock');
@@ -68,13 +69,19 @@
     
     var originalLog = console.log;
     console.log = function (msg) {
-        var args = arguments;
-        for (var i = 1; i < args.length; i++) {
-            msg = msg.replace(/(^|[^%])%[sd]/, function (_, s) {
-                return s + args[i];
-            });
+        if('string' === typeof msg) {
+          var args = arguments;
+          for (var i = 1; i < args.length; i++) {
+              msg = msg.replace(/(^|[^%])%[sd]/, function (_, s) {
+                  return s + args[i];
+              });
+          }
+        } else {
+          msg = [].map.call(arguments, function (v) {
+            return util.inspect(v)
+          }).join(' ')
         }
-        
+
         process.stdout.write(msg + '\n');
         if (typeof originalLog === 'function') {
             return originalLog.apply(this, arguments);
