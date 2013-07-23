@@ -27,74 +27,91 @@ var ecstatic = require('ecstatic')(dir);
 var resolve = require('resolve').sync;
 
 if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
-    try {
-        var pkg = require(path.join(dir, 'package.json'));
-    }
-    catch (err) {
-        if (err.code === 'MODULE_NOT_FOUND') {
-            console.error(
-                'No package.json in ' + dir + ' found.\n'
-                + 'Consult the quick start guide for how to create one:\n'
-                + 'https://ci.testling.com/guide/quick_start'
-            );
-        }
-        else {
-            console.error(err.message);
-        }
-        return;
-    }
-    
-    if (!pkg.testling) {
-        console.error(
-            'The "testling" field isn\'t present '
-            + 'in ' + path.join(dir, 'package.json') + '.\n'
-            + 'This field is required by testling. Please consult:\n'
-            + 'https://ci.testling.com/guide/quick_start'
-        );
-        return;
-    }
-    var bundleId = Math.floor(Math.pow(16,8)*Math.random()).toString(16);
-    
-    if (pkg.testling.preprocess) {
-        // todo
-    }
-    else if (!pkg.testling.html) {
-        unglob(dir, pkg.testling, function (err, expanded) {
-            if (err) return console.error(err);
-            process.env.PATH = path.resolve(dir, 'node_modules/.bin')
-                + ':' + process.env.PATH
-            ;
-            scripts = expanded.script;
-            
-            if (expanded.file.length) {
-                var args = expanded.file.concat('--debug');
-                var ps = spawn('browserify', args, { cwd: dir });
-                ps.stdout.pipe(concat(function (src) {
-                    bundle = src;
-                    htmlQueue.forEach(function (f) { getHTML(f) });
-                }));
-                ps.stderr.pipe(process.stderr);
-                ps.on('exit', function (code) {
-                    if (code !== 0) {
-                        console.error('FAILURE: non-zero exit code');
-                    }
-                    else ready();
-                });
+    var files = argv._
+    if(files.length && files.every(function (f) { return /\.js$/.test(f) })) {
+        var args = files.concat('--debug');
+        var ps = spawn('browserify', args);
+        pkg = {testling: {}}
+        ps.stdout.pipe(concat(function (src) {
+            bundle = src;
+        }));
+        ps.stderr.pipe(process.stderr);
+        ps.on('exit', function (code) {
+            if (code !== 0) {
+                console.error('FAILURE: non-zero exit code');
             }
-            else if (expanded.script.length) {
-                ready();
-            }
-            else {
-                console.error(
-                    'No test files, no scripts, and no html parameter found'
-                    + 'after expanding the globs. At least one file or a custom'
-                    + 'html field is needed.'
-                );
-                process.exit(1);
-            }
+            else ready();
         });
-    }
+    } else {
+
+      try {
+          var pkg = require(path.join(dir, 'package.json'));
+      }
+      catch (err) {
+          if (err.code === 'MODULE_NOT_FOUND') {
+              console.error(
+                  'No package.json in ' + dir + ' found.\n'
+                  + 'Consult the quick start guide for how to create one:\n'
+                  + 'https://ci.testling.com/guide/quick_start'
+              );
+          }
+          else {
+              console.error(err.message);
+          }
+          return;
+      }
     
+      if (!pkg.testling) {
+          console.error(
+              'The "testling" field isn\'t present '
+              + 'in ' + path.join(dir, 'package.json') + '.\n'
+              + 'This field is required by testling. Please consult:\n'
+              + 'https://ci.testling.com/guide/quick_start'
+          );
+          return;
+      }
+      var bundleId = Math.floor(Math.pow(16,8)*Math.random()).toString(16);
+    
+      if (pkg.testling.preprocess) {
+          // todo
+      }
+      else if (!pkg.testling.html) {
+          unglob(dir, pkg.testling, function (err, expanded) {
+              if (err) return console.error(err);
+              process.env.PATH = path.resolve(dir, 'node_modules/.bin')
+                  + ':' + process.env.PATH
+              ;
+              scripts = expanded.script;
+            
+              if (expanded.file.length) {
+                  var args = expanded.file.concat('--debug');
+                  var ps = spawn('browserify', args, { cwd: dir });
+                  ps.stdout.pipe(concat(function (src) {
+                      bundle = src;
+                      htmlQueue.forEach(function (f) { getHTML(f) });
+                  }));
+                  ps.stderr.pipe(process.stderr);
+                  ps.on('exit', function (code) {
+                      if (code !== 0) {
+                          console.error('FAILURE: non-zero exit code');
+                      }
+                      else ready();
+                  });
+              }
+              else if (expanded.script.length) {
+                  ready();
+              }
+              else {
+                  console.error(
+                      'No test files, no scripts, and no html parameter found'
+                      + 'after expanding the globs. At least one file or a custom'
+                      + 'html field is needed.'
+                  );
+                  process.exit(1);
+              }
+          });
+      }
+   }
 }
 else {
     process.stdin.pipe(concat(function (src) {
