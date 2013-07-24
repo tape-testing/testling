@@ -144,17 +144,7 @@ var server = http.createServer(function (req, res) {
 
 server.listen(0, ready);
 
-if (argv.u || argv.cmd) {
-    ready();
-}
-else if (argv.x) {
-    launch = function (href, opts, cb) {
-        var cmd = parseCommand(argv.x).concat(href);
-        var ps = spawn(cmd[0], cmd.slice(1));
-        ps.stdout.pipe(process.stdout);
-        ps.stderr.pipe(process.stderr);
-        cb(null);
-    };
+if (argv.u || argv.cmd || argv.x || argv.bcmd) {
     ready();
 }
 else {
@@ -176,8 +166,8 @@ function ready () {
     if (argv.u) {
         console.log(href);
     }
-    else if (argv.bcmd) {
-        var cmd = parseCommand(argv.bcmd);
+    else if (argv.bcmd || argv.x) {
+        var cmd = parseCommand(argv.bcmd || argv.x);
         var ps = spawn(cmd[0], cmd.slice(1).concat(href));
         ps.stderr.pipe(process.stderr);
         ps.stdout.pipe(process.stderr);

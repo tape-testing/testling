@@ -60,11 +60,13 @@ testling field.
 
 OPTIONS are:
 
-  --bcmd  Launch a browser with an explicit command. By default, chrome or
+      -x  Launch a browser with an explicit command. By default, chrome or
           firefox is launched by searching your $PATH.
 
       -u  Instead of launching a browser, print the url to visit so you can open
           the browser yourself.
+
+  --html  Instead of launching a server, show the generated html.
 
 ```
 
