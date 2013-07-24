@@ -144,6 +144,11 @@ var server = http.createServer(function (req, res) {
 
 server.listen(0, ready);
 
+if ((argv.x || argv.bcmd) && typeof (argv.x || argv.bcmd) === 'boolean') {
+    console.error('-x expects an argument');
+    process.exit(1);
+}
+        
 if (argv.u || argv.cmd || argv.x || argv.bcmd) {
     ready();
 }
