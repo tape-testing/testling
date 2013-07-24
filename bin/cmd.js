@@ -25,10 +25,11 @@ var pending = 3;
 var dir = path.resolve(argv._[0] === '-' ? false : argv._[0] || process.cwd());
 var ecstatic = require('ecstatic')(dir);
 var resolve = require('resolve').sync;
+var pkg = { testling: {} };
 
 if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
     try {
-        var pkg = require(path.join(dir, 'package.json'));
+        pkg = require(path.join(dir, 'package.json'));
     }
     catch (err) {
         if (err.code === 'MODULE_NOT_FOUND') {
