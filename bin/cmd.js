@@ -8,7 +8,7 @@ var parseCommand = require('shell-quote').parse;
 var ent = require('ent');
 var fs = require('fs');
 
-var argv = require('optimist').argv;
+var argv = require('optimist').boolean('u').argv;
 if (argv.h || argv.help) {
     return fs.createReadStream(__dirname + '/usage.txt').pipe(process.stdout);
 }
@@ -147,6 +147,16 @@ server.listen(0, ready);
 if (argv.u || argv.cmd) {
     ready();
 }
+else if (argv.x) {
+    launch = function (href, opts, cb) {
+        var cmd = parseCommand(argv.x).concat(href);
+        var ps = spawn(cmd[0], cmd.slice(1));
+        ps.stdout.pipe(process.stdout);
+        ps.stderr.pipe(process.stderr);
+        cb(null);
+    };
+    ready();
+}
 else {
     launcher(function (err, launch_) {
         if (err) return console.error(err);
@@ -160,7 +170,7 @@ function ready () {
     
     var opts = {
         headless: true,
-        browser: launch && launch.browsers.local[0].name
+        browser: launch && launch.browsers && launch.browsers.local[0].name
     };
     var href = 'http://localhost:' + server.address().port + '/';
     if (argv.u) {
