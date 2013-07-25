@@ -1,12 +1,16 @@
 #!/usr/bin/env node
 var http = require('http');
 var spawn = require('child_process').spawn;
-var launcher = require('browser-launcher');
+var fs = require('fs');
+
+var bouncy = require('bouncy');
+var ent = require('ent');
+var parseCommand = require('shell-quote').parse;
+var copy = require('shallow-copy');
+
 var concat = require('concat-stream');
 var finished = require('tap-finished');
-var parseCommand = require('shell-quote').parse;
-var ent = require('ent');
-var fs = require('fs');
+var launcher = require('browser-launcher');
 
 var argv = require('optimist').boolean('u').argv;
 if (argv.h || argv.help) {
@@ -21,7 +25,7 @@ var prelude = fs.readFileSync(__dirname + '/../bundle/prelude.js', 'utf8');
 var bundle, launch;
 var scripts = [];
 var htmlQueue = [];
-var pending = 3;
+var pending = 4;
 var dir = path.resolve(argv._[0] === '-' ? false : argv._[0] || process.cwd());
 var ecstatic = require('ecstatic')(dir);
 var resolve = require('resolve').sync;
@@ -136,8 +140,31 @@ var server = http.createServer(function (req, res) {
         ecstatic(req, res);
     }
 });
-
 server.listen(0, ready);
+
+var customServer = pkg.testling.server && (function () {
+    var cmd = pkg.testling.server;
+    if (!Array.isArray(cmd)) cmd = parseCommand(cmd);
+    
+    var env = copy(process.env);
+    env.PORT = (Math.pow(2, 16) - 10000) * Math.random() + 10000;
+    
+    var ps = spawn(cmd[0], cmd.slice(1), { cwd: dir, env: env });
+    ps.stdout.pipe(process.stdout);
+    ps.stderr.pipe(process.stderr);
+    
+    return { port: env.PORT };
+})();
+
+var bouncer = bouncy(function (req, res, bounce) {
+    if (!customServer || req.url.split('/')[1] === '__testling') {
+        bounce(server.address().port);
+    }
+    else {
+        bounce(customServer.port);
+    }
+});
+bouncer.listen(0, ready);
 
 if ((argv.x || argv.bcmd) && typeof (argv.x || argv.bcmd) === 'boolean') {
     console.error('-x expects an argument');
@@ -162,7 +189,7 @@ function ready () {
         headless: true,
         browser: launch && launch.browsers && launch.browsers.local[0].name
     };
-    var href = 'http://localhost:' + server.address().port + '/__testling';
+    var href = 'http://localhost:' + bouncer.address().port + '/__testling';
     if (argv.u) {
         console.log(href);
     }
