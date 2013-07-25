@@ -4,7 +4,7 @@
     var json = typeof JSON === 'object' ? JSON : require('jsonify');
     
     process.on = function () {};
-    var ws = xws('/sock');
+    var ws = xws('/__testling/sock');
     ws.write(window.location.hash + '\n');
     
     function createChannel (writeListen) {

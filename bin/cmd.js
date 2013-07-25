@@ -113,7 +113,7 @@ if (argv.html) {
 }
 
 var server = http.createServer(function (req, res) {
-    if (req.url === '/sock') {
+    if (req.url === '/__testling/sock') {
         req.pipe(xws(function (stream) {
             stream.pipe(process.stdout, { end: false });
             stream.pipe(finished(function (results) {
@@ -125,17 +125,9 @@ var server = http.createServer(function (req, res) {
         }));
         req.on('end', res.end.bind(res));
     }
-    else if (req.url === '/') {
+    else if (req.url.split('?')[0].replace(/\/$/, '') === '/__testling') {
         res.setHeader('content-type', 'text/html');
         getHTML(function (html) { res.end(html) });
-    }
-    else if (req.url === '/__testling_prelude.js') {
-        res.setHeader('content-type', 'application/javascript');
-        res.end(prelude);
-    }
-    else if (req.url === '/__testling_bundle.js') {
-        res.setHeader('content-type', 'application/javascript');
-        res.end(bundle);
     }
     else {
         ecstatic(req, res);
@@ -167,7 +159,7 @@ function ready () {
         headless: true,
         browser: launch && launch.browsers && launch.browsers.local[0].name
     };
-    var href = 'http://localhost:' + server.address().port + '/';
+    var href = 'http://localhost:' + server.address().port + '/__testling';
     if (argv.u) {
         console.log(href);
     }
