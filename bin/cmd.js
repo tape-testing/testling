@@ -113,7 +113,9 @@ if (argv.html) {
 }
 
 var server = http.createServer(function (req, res) {
-    if (req.url === '/__testling/sock') {
+    var u = req.url.split('?')[0];
+    
+    if (u === '/__testling/sock') {
         req.pipe(xws(function (stream) {
             stream.pipe(process.stdout, { end: false });
             stream.pipe(finished(function (results) {
@@ -125,11 +127,12 @@ var server = http.createServer(function (req, res) {
         }));
         req.on('end', res.end.bind(res));
     }
-    else if (req.url.split('?')[0].replace(/\/$/, '') === '/__testling') {
+    else if (u.replace(/\/$/, '') === '/__testling') {
         res.setHeader('content-type', 'text/html');
         getHTML(function (html) { res.end(html) });
     }
-    else {
+    else if (u.split('/')[1] === '__testling') {
+        req.url = req.url.replace(/^\/__testling/, '');
         ecstatic(req, res);
     }
 });
