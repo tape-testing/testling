@@ -8,11 +8,12 @@ testling field.
 
 OPTIONS are:
 
-      -x  Launch a browser with an explicit command. By default, chrome or
-          firefox is launched by searching your $PATH.
+     --html  Instead of launching a server, show the generated html.
+     
+  --no-show  Don't render the console.log() output to the document body.
+ 
+         -u  Instead of launching a browser, print the url to visit so you can
+             open the browser yourself.
 
-      -u  Instead of launching a browser, print the url to visit so you can open
-          the browser yourself.
-
-  --html  Instead of launching a server, show the generated html.
-
+         -x  Launch a browser with an explicit command. By default, chrome or
+             firefox is launched by searching your $PATH.

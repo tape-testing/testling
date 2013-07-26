@@ -2,6 +2,7 @@
 var http = require('http');
 var spawn = require('child_process').spawn;
 var fs = require('fs');
+var qs = require('querystring');
 
 var bouncy = require('bouncy');
 var ent = require('ent');
@@ -16,6 +17,7 @@ var argv = require('optimist').boolean('u').argv;
 if (argv.h || argv.help) {
     return fs.createReadStream(__dirname + '/usage.txt').pipe(process.stdout);
 }
+if (argv.show === undefined) argv.show = true;
 
 var unglob = require('../lib/unglob.js');
 
@@ -166,7 +168,8 @@ var customServer = pkg.testling.server && (function () {
 })();
 
 var bouncer = bouncy(function (req, res, bounce) {
-    if (!customServer || req.url.split('/')[1] === '__testling') {
+    var u = req.url.split('?')[0];
+    if (!customServer || u.split('/')[1] === '__testling') {
         bounce(server.address().port);
     }
     else {
@@ -198,7 +201,11 @@ function ready () {
         headless: true,
         browser: launch && launch.browsers && launch.browsers.local[0].name
     };
-    var href = 'http://localhost:' + bouncer.address().port + '/__testling';
+    var href = 'http://localhost:'
+        + bouncer.address().port
+        + '/__testling?'
+        + qs.stringify({ show: Boolean(argv.show) })
+    ;
     if (argv.u) {
         console.log(href);
     }
