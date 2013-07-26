@@ -66,6 +66,19 @@ if (typeof console === 'undefined') {
     console = {};
 }
 
+var params = (function () {
+    var unesc = typeof decodeURIComponent !== 'undefined'
+        ? decodeURIComponent : unescape
+    ;
+    var parts = (window.location.search || '').replace(/^\?/, '').split('&');
+    var opts = {};
+    for (var i = 0; i < parts.length; i++) {
+        var x = parts[i].split('=');
+        opt[unesc(x[0])] = unesc(x[1]);
+    }
+    return opts;
+})();
+
 var originalLog = console.log;
 console.log = function (msg) {
     var index = 1;
@@ -81,6 +94,8 @@ console.log = function (msg) {
     for (var i = index; i < args.length; i++) {
         msg += ' ' + inspect(args[i]);
     }
+    if (parseBoolean(params.)) {
+    }
     
     process.stdout.write(msg + '\n');
     if (typeof originalLog === 'function') {
@@ -90,3 +105,9 @@ console.log = function (msg) {
 };
 
 window.__testlingConsole = console;
+
+function parseBoolean (x) {
+    if (x === undefined || x === '') return true;
+    if (x === 'false' || x === '0') return false;
+    return true;
+}
