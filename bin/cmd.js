@@ -258,7 +258,7 @@ function getHTML (cb) {
         after = '<script>mocha.run()</script>';
     }
     
-    cb('<html><body>'
+    cb('<html><head><meta charset="utf-8"></head><body>'
         + '<script>' + prelude + '</script>'
         + before
         + scripts.map(function (s) {
