@@ -71,6 +71,10 @@ OPTIONS are:
              firefox is launched by searching your $PATH.
 ```
 
+# testling field
+
+[Read more about how the package.json "testling" field works.](doc/testling_field.markdown)
+
 # install
 
 First, install `browserify` globally so that the `testling` command can find it
