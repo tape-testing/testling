@@ -122,6 +122,7 @@ if (argv.html) {
 
 var server = http.createServer(function (req, res) {
     var u = req.url.split('?')[0];
+    res.setHeader('connection', 'close');
     
     if (u === '/__testling/sock') {
         req.pipe(xws(function (stream) {
@@ -158,6 +159,10 @@ var customServer = pkg.testling.server && (function () {
     ps.stdout.pipe(process.stdout);
     ps.stderr.pipe(process.stderr);
     
+    ps.on('exit', function (code) {
+        console.error('testling.server exited with status: ' + code);
+    });
+    
     return { port: env.PORT };
 })();
 
@@ -165,8 +170,14 @@ var bouncer = bouncy(function (req, res, bounce) {
     if (!customServer || req.url.split('/')[1] === '__testling') {
         bounce(server.address().port);
     }
-    else {
+    else if (req.headers.upgrade
+    || (req.headers.connect || '').toLowerCase() === 'upgrade') {
         bounce(customServer.port);
+    }
+    else {
+        bounce(customServer.port, {
+            headers: { 'connection': 'close' }
+        });
     }
 });
 bouncer.listen(0, ready);
