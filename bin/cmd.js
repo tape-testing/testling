@@ -170,14 +170,8 @@ var bouncer = bouncy(function (req, res, bounce) {
     if (!customServer || req.url.split('/')[1] === '__testling') {
         bounce(server.address().port);
     }
-    else if (req.headers.upgrade
-    || (req.headers.connect || '').toLowerCase() === 'upgrade') {
-        bounce(customServer.port);
-    }
     else {
-        bounce(customServer.port, {
-            headers: { 'connection': 'close' }
-        });
+        bounce(customServer.port, { headers: { connection: 'close' } });
     }
 });
 bouncer.listen(0, ready);
