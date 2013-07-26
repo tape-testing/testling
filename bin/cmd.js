@@ -66,14 +66,18 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
     else if (!pkg.testling.html) {
         unglob(dir, pkg.testling, function (err, expanded) {
             if (err) return console.error(err);
-            process.env.PATH = path.resolve(dir, 'node_modules/.bin')
-                + ':' + process.env.PATH
+            
+            var env = copy(process.env);
+            env.PATH = path.resolve(dir, 'node_modules/.bin')
+                + ':' + env.PATH + ':'
+                + path.resolve(__dirname, '../node_modules/.bin')
             ;
             scripts = expanded.script;
             
             if (expanded.file.length) {
                 var args = expanded.file.concat('--debug');
-                var ps = spawn('browserify', args, { cwd: dir });
+                
+                var ps = spawn('browserify', args, { cwd: dir, env: env });
                 ps.stdout.pipe(concat(function (src) {
                     bundle = src;
                     htmlQueue.forEach(function (f) { getHTML(f) });
@@ -145,9 +149,10 @@ server.listen(0, ready);
 var customServer = pkg.testling.server && (function () {
     var cmd = pkg.testling.server;
     if (!Array.isArray(cmd)) cmd = parseCommand(cmd);
+    if (/\.js$/.test(cmd[0])) cmd.unshift(process.execPath);
     
     var env = copy(process.env);
-    env.PORT = (Math.pow(2, 16) - 10000) * Math.random() + 10000;
+    env.PORT = Math.floor((Math.pow(2, 16) - 10000) * Math.random() + 10000);
     
     var ps = spawn(cmd[0], cmd.slice(1), { cwd: dir, env: env });
     ps.stdout.pipe(process.stdout);
