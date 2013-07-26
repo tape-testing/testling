@@ -17,7 +17,7 @@
         "headless"
     ],
     "scripts" : {
-        "prepublish" : "mkdir -p bundle && browserify browser/prelude -o bundle/prelude.js"
+        "prepublish" : "mkdir -p bundle && browserify browser/prelude.js -o bundle/prelude.js"
     },
     "dependencies" : {
         "jsonify" : "~0.0.0",

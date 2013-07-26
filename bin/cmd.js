@@ -103,7 +103,6 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
             }
         });
     }
-    
 }
 else {
     process.stdin.pipe(concat(function (src) {
@@ -253,6 +252,7 @@ function getHTML (cb) {
     }
     
     cb('<html><head><meta charset="utf-8"></head><body>'
+        + '<pre id="__testling_output"></pre>'
         + '<script>' + prelude + '</script>'
         + before
         + scripts.map(function (s) {

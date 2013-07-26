@@ -74,7 +74,7 @@ var params = (function () {
     var opts = {};
     for (var i = 0; i < parts.length; i++) {
         var x = parts[i].split('=');
-        opt[unesc(x[0])] = unesc(x[1]);
+        opts[unesc(x[0])] = unesc(x[1]);
     }
     return opts;
 })();
@@ -94,10 +94,14 @@ console.log = function (msg) {
     for (var i = index; i < args.length; i++) {
         msg += ' ' + inspect(args[i]);
     }
-    if (parseBoolean(params.)) {
-    }
     
+    if (params.show === undefined || parseBoolean(params.show)) {
+        var elem = document.getElementById('__testling_output');
+        var txt = document.createTextNode(msg + '\n');
+        elem.appendChild(txt);
+    }
     process.stdout.write(msg + '\n');
+    
     if (typeof originalLog === 'function') {
         return originalLog.apply(this, arguments);
     }
@@ -107,7 +111,6 @@ console.log = function (msg) {
 window.__testlingConsole = console;
 
 function parseBoolean (x) {
-    if (x === undefined || x === '') return true;
     if (x === 'false' || x === '0') return false;
     return true;
 }
