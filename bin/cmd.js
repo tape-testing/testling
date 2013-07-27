@@ -250,7 +250,7 @@ function getHTML (cb) {
         var m = /^mocha-(\w+)/.exec(pkg.testling.harness);
         var ui = m && m[1] || 'bdd';
         before =
-            '<script src="' + mochaFile + '"></script>'
+            '<script src="/__testling/' + mochaFile + '"></script>'
             + '<script>mocha.setup(' + JSON.stringify({
                 ui: ui, reporter: 'tap'
             }) + ')</script>'
@@ -263,7 +263,9 @@ function getHTML (cb) {
         + '<script>' + prelude + '</script>'
         + before
         + scripts.map(function (s) {
-            return '<script src="' + ent.encode(s) + '"></script>'
+            return '<script src="/__testling/'
+                + ent.encode(s) + '"></script>'
+            ;
         }).join('\n')
         + '<script>' + bundle + '</script>'
         + after
