@@ -97,3 +97,54 @@ Specify a string and it will be run:
 ``` json
 "preprocess": "./build.sh"
 ```
+
+# server
+
+If you have a server-side element of your browser tests, you can use the
+`"server"` field to specify a command to spin up a server with. This is very
+handy if you need to test browser code that makes XHR or websocket requests to a
+server.
+
+Your server should listen on the `$PORT` environment variable
+(`parseInt(process.env.PORT)`) and the tests will be mounted at `__testling/` on
+the same server.
+
+Here is an example server in [node](http://nodejs.org):
+
+``` js
+var http = require('http');
+var server = http.createServer(function (req, res) {
+    if (req.url === 'beep') {
+        res.end('boop');
+    }
+    else res.end('...');
+});
+server.listen(parseInt(process.env.PORT));
+```
+
+you could then make a test that issues an xhr request to `/beep`to make sure
+that the response is `'boop'`:
+
+``` js
+var test = require('tape');
+var hyperquest = require('hyperquest');
+var concat = reuqire('concat');
+var resolve = require('url').resolve;
+
+test('beep boop xhr request', function (t) {
+    t.plan(1);
+    
+    var href = resolve(location.href, '/beep');
+    hyperquest(href).pipe(concat(function (body) {
+        t.equal(body.toString(), 'boop');
+    }));
+});
+```
+
+in your package.json `"testling"` field just add:
+
+``` json
+"server": "server.js"
+```
+
+then just run the `testling` command to very your test output!
