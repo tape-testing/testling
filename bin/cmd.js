@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 var http = require('http');
 var spawn = require('child_process').spawn;
+var execSync = require('exec-sync');
 var fs = require('fs');
 var qs = require('querystring');
 
@@ -62,8 +63,14 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
     }
     var bundleId = Math.floor(Math.pow(16,8)*Math.random()).toString(16);
     
-    if (pkg.testling.preprocess) {
-        // todo
+    var cmd = pkg.testling.preprocess;
+    if (typeof cmd === "string") {
+      try{
+        execSync(cmd);
+      }catch(err){
+        console.error("Could not run 'preproccess' command: ", err.message);
+        return;
+      }
     }
     else if (!pkg.testling.html) {
         unglob(dir, pkg.testling, function (err, expanded) {
