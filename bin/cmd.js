@@ -105,6 +105,10 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
             }
         });
     }
+
+    if (pkg.testling.html) {
+        ready();
+    }
 }
 else {
     process.stdin.pipe(concat(function (src) {
@@ -143,6 +147,9 @@ var server = http.createServer(function (req, res) {
     }
     else if (u.split('/')[1] === '__testling') {
         req.url = req.url.replace(/^\/__testling/, '');
+        ecstatic(req, res);
+    }
+    else {
         ecstatic(req, res);
     }
 });
@@ -231,8 +238,7 @@ function ready () {
 }
 
 function getHTML (cb) {
-    if (bundle === undefined) return htmlQueue.push(cb);
-    
+
     if (pkg.testling.html) {
         fs.readFile(path.join(dir, pkg.testling.html), function (err, src) {
             if (err) console.error('while loading testling.html: ' + err);
@@ -242,6 +248,9 @@ function getHTML (cb) {
         });
         return;
     }
+
+    if (bundle === undefined) return htmlQueue.push(cb);
+
     var before = '', after = '';
     if (/^mocha(-|$)/.test(pkg.testling.harness)) {
         var mochaFile = path.relative(dir,

@@ -97,8 +97,10 @@ console.log = function (msg) {
     
     if (params.show === undefined || parseBoolean(params.show)) {
         var elem = document.getElementById('__testling_output');
-        var txt = document.createTextNode(msg + '\n');
-        elem.appendChild(txt);
+        if (elem) {
+            var txt = document.createTextNode(msg + '\n');
+            elem.appendChild(txt);
+        }
     }
     process.stdout.write(msg + '\n');
     
