@@ -93,6 +93,7 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
                 });
             }
             else if (expanded.script.length) {
+                bundle = '';
                 ready();
             }
             else {
