@@ -75,6 +75,43 @@ OPTIONS are:
 
 [Read more about how the package.json "testling" field works.](doc/testling_field.markdown)
 
+# code coverage
+
+To compute code coverage, just use the
+[coverify](https://npmjs.org/package/coverify)
+transform with `-t coverify` when you run browserify.
+
+[coverify](https://npmjs.org/package/coverify) writes coverage data with
+console.log(), so you can pipe the output of testling through to the `coverify`
+command to parse the results and give human-readable output:
+
+```
+$ browserify -t coverify test.js | testling | coverify
+
+TAP version 13
+# beep boop
+ok 1 should be equal
+
+1..1
+# tests 1
+# pass  1
+
+# ok
+
+# /home/substack/projects/coverify/example/test.js: line 7, column 16-28
+
+  if (err) deadCode();
+           ^^^^^^^^^^^
+
+# /home/substack/projects/coverify/example/foo.js: line 3, column 35-48
+
+  if (i++ === 10 || (false && neverFires())) {
+                              ^^^^^^^^^^^^
+
+```
+
+The exit code of coverify is non-zero when there are unreachable expressions.
+
 # install
 
 First, install `browserify` globally so that the `testling` command can find it
