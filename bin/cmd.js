@@ -122,7 +122,7 @@ else {
 var xws = require('xhr-write-stream')();
 
 if (argv.html) {
-    getHTML(function (html) { console.log(html) });
+    ready();ready();ready();
     return;
 }
 
@@ -204,6 +204,11 @@ else {
 
 function ready () {
     if (--pending !== 0) return;
+
+    if (argv.html) {
+        getHTML(function (html) { console.log(html) });
+        return;
+    }
     
     var opts = {
         headless: true,
