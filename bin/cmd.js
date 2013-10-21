@@ -212,7 +212,7 @@ function ready () {
     
     var opts = {
         headless: true,
-        browser: launch && launch.browsers && launch.browsers.local[0].name
+        browser: launch && launch.browsers && launch.browsers.local.filter(function(b){ return b.headless; })[0].name
     };
     var href = 'http://localhost:'
         + bouncer.address().port
