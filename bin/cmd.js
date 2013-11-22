@@ -24,7 +24,7 @@ var unglob = require('../lib/unglob.js');
 var path = require('path');
 var prelude = fs.readFileSync(__dirname + '/../bundle/prelude.js', 'utf8');
 
-var bundle, launch;
+var bundle, launch, browser;
 var scripts = [];
 var htmlQueue = [];
 var pending = 4;
@@ -50,7 +50,7 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
         }
         return;
     }
-    
+
     if (!pkg.testling) {
         console.error(
             'The "testling" field isn\'t present '
@@ -61,24 +61,24 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
         return;
     }
     var bundleId = Math.floor(Math.pow(16,8)*Math.random()).toString(16);
-    
+
     if (pkg.testling.preprocess) {
         // todo
     }
     else if (!pkg.testling.html) {
         unglob(dir, pkg.testling, function (err, expanded) {
             if (err) return console.error(err);
-            
+
             var env = copy(process.env);
             env.PATH = path.resolve(dir, 'node_modules/.bin')
                 + ':' + env.PATH + ':'
                 + path.resolve(__dirname, '../node_modules/.bin')
             ;
             scripts = expanded.script;
-            
+
             if (expanded.file.length) {
                 var args = expanded.file.concat('--debug');
-                
+
                 var ps = spawn('browserify', args, { cwd: dir, env: env });
                 ps.stdout.pipe(concat(function (src) {
                     bundle = src;
@@ -129,7 +129,7 @@ if (argv.html) {
 var server = http.createServer(function (req, res) {
     var u = req.url.split('?')[0];
     res.setHeader('connection', 'close');
-    
+
     if (u === '/__testling/sock') {
         req.pipe(xws(function (stream) {
             stream.pipe(process.stdout, { end: false });
@@ -160,18 +160,18 @@ var customServer = pkg.testling.server && (function () {
     var cmd = pkg.testling.server;
     if (!Array.isArray(cmd)) cmd = parseCommand(cmd);
     if (/\.js$/.test(cmd[0])) cmd.unshift(process.execPath);
-    
+
     var env = copy(process.env);
     env.PORT = Math.floor((Math.pow(2, 16) - 10000) * Math.random() + 10000);
-    
+
     var ps = spawn(cmd[0], cmd.slice(1), { cwd: dir, env: env });
     ps.stdout.pipe(process.stdout);
     ps.stderr.pipe(process.stderr);
-    
+
     ps.on('exit', function (code) {
         console.error('testling.server exited with status: ' + code);
     });
-    
+
     return { port: env.PORT };
 })();
 
@@ -190,7 +190,7 @@ if ((argv.x || argv.bcmd) && typeof (argv.x || argv.bcmd) === 'boolean') {
     console.error('-x expects an argument');
     process.exit(1);
 }
-        
+
 if (argv.u || argv.cmd || argv.x || argv.bcmd) {
     ready();
 }
@@ -198,6 +198,25 @@ else {
     launcher(function (err, launch_) {
         if (err) return console.error(err);
         launch = launch_;
+
+        if (launch && launch.browsers && launch.browsers.local && launch.browsers.local.length) {
+            var browsers = launch.browsers.local;
+
+            if (process.platform === 'darwin') {
+                browsers = browsers.filter(function (b) { return b.headless; });
+                if (browsers.length === 0) {
+                    console.error('A headless browser (like PhantomJS) is required to run testling on this '
+                        + 'platform. Visit http://phantomjs.org/ for installation instructions.');
+                    process.exit(1);
+                }
+            }
+
+            browser = browsers[0].name;
+        } else {
+            console.error('Unable to find any suitable browsers on this system.');
+            process.exit(1);
+        }
+
         ready();
     });
 }
@@ -209,10 +228,10 @@ function ready () {
         getHTML(function (html) { console.log(html) });
         return;
     }
-    
+
     var opts = {
         headless: true,
-        browser: launch && launch.browsers && launch.browsers.local[0].name
+        browser: browser
     };
     var href = 'http://localhost:'
         + bouncer.address().port
@@ -272,7 +291,7 @@ function getHTML (cb) {
         ;
         after = '<script>mocha.run()</script>';
     }
-    
+
     cb('<html><head><meta charset="utf-8"></head><body>'
         + '<pre id="__testling_output"></pre>'
         + '<script>' + prelude + '</script>'
