@@ -33,6 +33,7 @@ var dir = path.resolve(argv._[0] === '-' ? false : argv._[0] || process.cwd());
 var ecstatic = require('ecstatic')(dir);
 var resolve = require('resolve').sync;
 var pkg = { testling: { harness: argv.harness } };
+var browserProcess;
 
 if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
     try {
@@ -143,6 +144,9 @@ var server = http.createServer(function (req, res) {
         req.pipe(xws(function (stream) {
             stream.pipe(process.stdout, { end: false });
             stream.pipe(finished(function (results) {
+                if (browserProcess) {
+                  browserProcess.kill();
+                };
                 if (results.ok) {
                     process.exit(0);
                 }
@@ -231,10 +235,10 @@ function ready () {
 
     if (argv.bcmd || argv.x) {
         var cmd = parseCommand(argv.bcmd || argv.x);
-        var ps = spawn(cmd[0], cmd.slice(1).concat(href));
-        ps.stderr.pipe(process.stderr);
-        ps.stdout.pipe(process.stderr);
-        ps.on('exit', function (code) {
+        browserProcess = spawn(cmd[0], cmd.slice(1).concat(href));
+        browserProcess.stderr.pipe(process.stderr);
+        browserProcess.stdout.pipe(process.stderr);
+        browserProcess.on('exit', function (code) {
             if (code !== 0) {
                 console.error(
                     'Command ' + JSON.stringify(argv.bcmd)
@@ -269,6 +273,7 @@ function ready () {
 
         launch(href, opts, function (err, ps) {
             if (err) return console.error(err);
+            browserProcess = ps;
         });
     }
 }
