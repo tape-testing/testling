@@ -273,7 +273,7 @@ function getHTML (cb) {
         after = '<script>mocha.run()</script>';
     }
     
-    cb('<html><head><meta charset="utf-8"></head><body>'
+    cb('<!doctype html><html><head><meta charset="utf-8"></head><body>'
         + '<pre id="__testling_output"></pre>'
         + '<script>' + prelude + '</script>'
         + before
