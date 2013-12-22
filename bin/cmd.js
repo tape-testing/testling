@@ -31,7 +31,7 @@ var pending = 4;
 var dir = path.resolve(argv._[0] === '-' ? false : argv._[0] || process.cwd());
 var ecstatic = require('ecstatic')(dir);
 var resolve = require('resolve').sync;
-var pkg = { testling: {} };
+var pkg = { testling: { harness: argv.harness } };
 
 if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
     try {
