@@ -213,7 +213,8 @@ function ready () {
     var browser =
         launch &&
         launch.browsers &&
-        launch.browsers.local.filter(function(b) { return b.headless; })[0];
+        launch.browsers.local[0]
+        //launch.browsers.local.filter(function(b) { return b.headless; })[0];
 
     if (!browser) {
         console.error('No headless browser found.');
