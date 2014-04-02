@@ -259,7 +259,11 @@ function ready () {
             );
 
         if (!browser) {
-            console.error('No headless browser found.');
+            console.error('No suitable browser found.');
+            console.log('## AVAILABLE BROWSERS ##');
+            console.log(launch.browsers);
+            console.log('Did you install some additional browsers? Try removing ~/.config/browser-launcher/config.json to re-detect.');
+            console.log('PS! Only headless browsers supported on Darwin/OSX.');
             return process.exit(1);
         }
 
