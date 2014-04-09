@@ -98,6 +98,16 @@ Specify a string and it will be run:
 "preprocess": "./build.sh"
 ```
 
+You can also specify browserify transformations and other processing options in `package.json`.
+An example how to do file inlining for your test bundles with [brfs](https://github.com/substack/brfs):
+
+``` json
+"browserify": { "transform": ["brfs"] },
+"testling": {
+    "files": "test.js",
+    ....
+```
+
 # server
 
 If you have a server-side element of your browser tests, you can use the
