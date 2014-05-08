@@ -220,25 +220,6 @@ function ready () {
         return
     }
 
-    var browser =
-        launch &&
-        launch.browsers &&
-        (/linux|bsd/i.test(process.platform) // xvfb-run
-            ? launch.browsers.local[0]
-            : launch.browsers.local.filter(function(b) { return b.headless;
-            })[0]
-        );
-
-    if (!browser) {
-        console.error('No headless browser found.');
-        return process.exit(1);
-    }
-
-    var opts = {
-        headless: true,
-        browser: browser.name
-    };
-
     if (argv.bcmd || argv.x) {
         var cmd = parseCommand(argv.bcmd || argv.x);
         var ps = spawn(cmd[0], cmd.slice(1).concat(href));
@@ -254,6 +235,25 @@ function ready () {
         });
     }
     else {
+        var browser =
+            launch &&
+            launch.browsers &&
+            (/linux|bsd/i.test(process.platform) // xvfb-run
+                ? launch.browsers.local[0]
+                : launch.browsers.local.filter(function(b) { return b.headless;
+                })[0]
+            );
+
+        if (!browser) {
+            console.error('No headless browser found.');
+            return process.exit(1);
+        }
+
+        var opts = {
+            headless: true,
+            browser: browser.name
+        };
+
         launch(href, opts, function (err, ps) {
             if (err) return console.error(err);
         });
