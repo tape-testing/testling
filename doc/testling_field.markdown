@@ -32,7 +32,7 @@ Here's an example of
 
 ``` json
 "browsers": [
-    "ie/8..10"
+    "ie/8..10",
     "firefox/3.5", "firefox/latest",
     "chrome/latest",
     "safari/5..latest",
