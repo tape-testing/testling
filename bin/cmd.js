@@ -78,7 +78,8 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
           ready();
         });
     }
-    else if (!pkg.testling.html) {
+
+    if (!pkg.testling.html) {
         unglob(dir, pkg.testling, function (err, expanded) {
             if (err) return console.error(err);
 
