@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 var http = require('http');
 var spawn = require('child_process').spawn;
+var exec = require('child_process').exec;
 var fs = require('fs');
 var qs = require('querystring');
 
@@ -63,9 +64,22 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
     var bundleId = Math.floor(Math.pow(16,8)*Math.random()).toString(16);
 
     if (pkg.testling.preprocess) {
-        // todo
+        pending += 1;
+        exec(pkg.testling.preprocess, function(err) {
+          if (err) {
+            console.error(
+              'Unable to run the preprocess instructions:\n'
+              + err.message
+            );
+
+            return process.exit(1);
+          }
+
+          ready();
+        });
     }
-    else if (!pkg.testling.html) {
+
+    if (!pkg.testling.html) {
         unglob(dir, pkg.testling, function (err, expanded) {
             if (err) return console.error(err);
 
