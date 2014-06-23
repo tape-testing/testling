@@ -64,6 +64,7 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
     var bundleId = Math.floor(Math.pow(16,8)*Math.random()).toString(16);
 
     if (pkg.testling.preprocess) {
+        pending += 1;
         exec(pkg.testling.preprocess, function(err) {
           if (err) {
             console.error(
