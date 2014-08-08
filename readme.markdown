@@ -127,6 +127,12 @@ then do:
 npm install -g testling
 ```
 
+You also need Xvfb. On Debian/Ubuntu:
+
+```
+sudo apt-get install xvfb
+```
+
 # license
 
 MIT
