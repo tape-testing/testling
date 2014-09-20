@@ -61,14 +61,18 @@ testling field.
 OPTIONS are:
 
      --html  Instead of launching a server, show the generated html.
-     
+
   --no-show  Don't render the console.log() output to the document body.
- 
+
          -u  Instead of launching a browser, print the url to visit so you can
              open the browser yourself.
 
          -x  Launch a browser with an explicit command. By default, chrome or
              firefox is launched by searching your $PATH.
+
+     --host  Set up the testling url on a specific hostname. Default: localhost
+
+     --port  Set up the testling url on a specific port
 ```
 
 # testling field

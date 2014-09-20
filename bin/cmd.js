@@ -198,7 +198,7 @@ var bouncer = bouncy(function (req, res, bounce) {
         bounce(customServer.port, { headers: { connection: 'close' } });
     }
 });
-bouncer.listen(0, ready);
+bouncer.listen(argv.port || 0, ready);
 
 if ((argv.x || argv.bcmd) && typeof (argv.x || argv.bcmd) === 'boolean') {
     console.error('-x expects an argument');
@@ -224,7 +224,7 @@ function ready () {
         return;
     }
 
-    var href = 'http://localhost:'
+    var href = 'http://' + (argv.host || 'localhost') + ':'
         + bouncer.address().port
         + '/__testling?'
         + qs.stringify({ show: Boolean(argv.show) })
