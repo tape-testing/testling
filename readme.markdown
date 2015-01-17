@@ -116,6 +116,10 @@ ok 1 should be equal
 
 The exit code of coverify is non-zero when there are unreachable expressions.
 
+# dependencies
+
+Make sure you have [PhantomJS](https://github.com/ariya/phantomjs) installed; this is the headless browser that testling will run your tests in if you are not using the `-u` option.
+
 # install
 
 First, install `browserify` globally so that the `testling` command can find it
