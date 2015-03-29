@@ -138,7 +138,7 @@ that the response is `'boop'`:
 ``` js
 var test = require('tape');
 var hyperquest = require('hyperquest');
-var concat = reuqire('concat');
+var concat = require('concat');
 var resolve = require('url').resolve;
 
 test('beep boop xhr request', function (t) {
