@@ -20,6 +20,7 @@
         "prepublish" : "mkdir -p bundle && browserify browser/prelude.js -o bundle/prelude.js"
     },
     "dependencies" : {
+        "browser-launcher2": "^0.4.6",
         "jsonify" : "~0.0.0",
         "optimist" : "~0.5.2",
         "xhr-write-stream" : "~0.1.2",
