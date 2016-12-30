@@ -236,16 +236,13 @@ function ready () {
 
     if (argv.bcmd || argv.x) {
         var cmd = parseCommand(argv.bcmd || argv.x);
-        var ps = spawn(cmd[0], cmd.slice(1).concat(href));
-        ps.stderr.pipe(process.stderr);
-        ps.stdout.pipe(process.stderr);
-        ps.on('exit', function (code) {
-            if (code !== 0) {
-                console.error(
-                    'Command ' + JSON.stringify(argv.bcmd)
-                    + ' terminated with non-zero exit code'
-                );
-            }
+        var launcher = require('browser-launcher2')
+        launcher(function (err, launch) {
+            launch( cmd.slice(1).concat(href)[0],{browser: cmd[0]}, function (err, instance) {
+                if ( err ) {
+                    return console.error( err );
+                }
+            });
         });
     }
     else {
