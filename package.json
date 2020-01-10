@@ -6,7 +6,6 @@
         "type": "git",
         "url": "git://github.com/substack/testling.git"
     },
-    "main": "index.js",
     "browserify": "browser.js",
     "bin": {
         "testling": "bin/cmd.js"
