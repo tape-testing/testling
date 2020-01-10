@@ -26,6 +26,7 @@ var path = require('path');
 var prelude = fs.readFileSync(__dirname + '/../bundle/prelude.js', 'utf8');
 
 var bundle, launch;
+var bundleId = Math.floor(Math.pow(16,8)*Math.random()).toString(16);
 var scripts = [];
 var htmlQueue = [];
 var pending = 4;
@@ -61,7 +62,6 @@ if ((process.stdin.isTTY || argv._.length) && argv._[0] !== '-') {
         );
         return;
     }
-    var bundleId = Math.floor(Math.pow(16,8)*Math.random()).toString(16);
 
     if (pkg.testling.preprocess) {
         pending += 1;
@@ -159,6 +159,10 @@ var server = http.createServer(function (req, res) {
     else if (u.replace(/\/$/, '') === '/__testling') {
         res.setHeader('content-type', 'text/html');
         getHTML(function (html) { res.end(html) });
+    }
+    else if (u.replace(/\/$/, '') === '/__testling/' + bundleId + '.js') {
+        res.setHeader('content-type', 'application/javascript');
+        res.end(bundle);
     }
     else if (u.split('/')[1] === '__testling') {
         req.url = req.url.replace(/^\/__testling/, '');
@@ -317,7 +321,7 @@ function getHTML (cb) {
                 + ent.encode(s) + '"></script>'
             ;
         }).join('\n')
-        + '<script>' + bundle + '</script>'
+        + '<script src="/__testling/' + bundleId + '.js"></script>'
         + after
         + '</body></html>'
     );
