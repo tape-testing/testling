@@ -17,7 +17,9 @@
         "headless"
     ],
     "scripts": {
-        "prepublish": "mkdir -p bundle && browserify browser/prelude.js -o bundle/prelude.js"
+        "prebuild": "rimraf bundle",
+        "build": "mkdir -p bundle && browserify browser/prelude.js -o bundle/prelude.js",
+        "prepublish": "npm run build"
     },
     "dependencies": {
         "bouncy": "~3.2.0",

@@ -1,0 +1,6 @@
+# gitignore
+
+node_modules
+
+# build output
+bundle
