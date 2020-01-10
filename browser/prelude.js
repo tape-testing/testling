@@ -1,6 +1,5 @@
 var xws = require('xhr-write-stream');
 var Stream = require('stream');
-var json = typeof JSON === 'object' ? JSON : require('jsonify');
 var inspect = require('object-inspect');
 
 process.on = function () {};
