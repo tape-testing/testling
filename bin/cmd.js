@@ -215,18 +215,18 @@ function ready () {
     if (--pending !== 0) return;
 
     if (argv.html) {
-        getHTML(function (html) { console.log(html) });
+        getHTML(function (html) { console.log(html); });
         return;
     }
 
     var href = 'http://' + (argv.host || 'localhost') + ':'
         + bouncer.address().port
         + '/__testling?'
-        + qs.stringify({ show: Boolean(argv.show) })
-    ;
+        + qs.stringify({ show: Boolean(argv.show) });
+
     if (argv.u) {
         console.log(href);
-        return
+        return;
     }
 
     if (argv.bcmd || argv.x) {
