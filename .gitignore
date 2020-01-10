@@ -4,3 +4,8 @@ node_modules
 
 # build output
 bundle
+
+# Only apps should have lockfiles
+npm-shrinkwrap.json
+package-lock.json
+yarn.lock
