@@ -47,9 +47,8 @@
         "node": ">=0.6"
     },
     "license": "MIT/X11",
-    "author": {
-        "name": "James Halliday",
-        "email": "mail@substack.net",
-        "url": "http://substack.net"
+    "author": "Jordan Harband <ljharb@gmail.com>",
+    "funding": {
+      "url": "https://github.com/sponsors/ljharb"
     }
 }
