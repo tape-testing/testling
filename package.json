@@ -18,7 +18,8 @@
     "scripts": {
         "prebuild": "rimraf bundle",
         "build": "mkdir -p bundle && browserify browser/prelude.js -o bundle/prelude.js",
-        "prepublish": "safe-publish-latest && npm run build"
+        "prepublishOnly": "safe-publish-latest && npm run build",
+        "prepublish": "not-in-publish || npm run prepublishOnly"
     },
     "dependencies": {
         "bouncy": "~3.2.2",
@@ -39,9 +40,10 @@
         "xhr-write-stream": "~0.1.2"
     },
     "devDependencies": {
-        "rimraf": "~3.0.0",
-        "safe-publish-latest": "~1.1.4",
-        "tape": "~5.0.0-next.3"
+        "in-publish": "~2.0.1",
+        "rimraf": "~3.0.2",
+        "safe-publish-latest": "^2.0.0",
+        "tape": "~5.6.1"
     },
     "engines": {
         "node": ">=0.6"
@@ -49,6 +51,6 @@
     "license": "MIT/X11",
     "author": "Jordan Harband <ljharb@gmail.com>",
     "funding": {
-      "url": "https://github.com/sponsors/ljharb"
+        "url": "https://github.com/sponsors/ljharb"
     }
 }
