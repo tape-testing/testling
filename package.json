@@ -26,6 +26,7 @@
         "browser-launcher": "~1.0.2",
         "browserify": "~3.46.1",
         "concat-stream": "~1.6.2",
+        "cross-spawn": "~5.1.0",
         "ecstatic": "~0.4.13",
         "ent": "~0.0.7",
         "glob": "~3.2.11",
@@ -36,7 +37,6 @@
         "shallow-copy": "~0.0.1",
         "shell-quote": "~1.7.3",
         "tap-finished": "~0.0.1",
-        "win-spawn": "~2.0.0",
         "xhr-write-stream": "~0.1.2"
     },
     "devDependencies": {

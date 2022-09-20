@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 var http = require('http');
-var spawn = require('win-spawn');
+var spawn = require('cross-spawn');
 var exec = require('child_process').exec;
 var fs = require('fs');
 var qs = require('querystring');
