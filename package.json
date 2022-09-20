@@ -46,7 +46,7 @@
         "tape": "~5.6.1"
     },
     "engines": {
-        "node": ">=0.6"
+        "node": ">=0.8"
     },
     "license": "MIT/X11",
     "author": "Jordan Harband <ljharb@gmail.com>",
