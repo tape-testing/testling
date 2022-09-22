@@ -11,7 +11,7 @@ var parseCommand = require('shell-quote').parse;
 var copy = require('shallow-copy');
 
 var concat = require('concat-stream');
-var finished = require('tap-finished');
+var finished = require('@tapjs/tap-finished');
 var launcher = require('browser-launcher');
 
 var argv = require('optimist').boolean('u').argv;
