@@ -19,7 +19,9 @@
         "prebuild": "rimraf bundle",
         "build": "mkdir -p bundle && browserify browser/prelude.js -o bundle/prelude.js",
         "prepublishOnly": "safe-publish-latest && npm run build",
-        "prepublish": "not-in-publish || npm run prepublishOnly"
+        "prepublish": "not-in-publish || npm run prepublishOnly",
+        "version": "auto-changelog && git add CHANGELOG.md",
+        "postversion": "auto-changelog && git add CHANGELOG.md && git commit --no-edit --amend && git tag -f \"v$(node -e \"console.log(require('./package.json').version)\")\""
     },
     "dependencies": {
         "@tapjs/tap-finished": "^0.0.3",
@@ -40,6 +42,7 @@
         "xhr-write-stream": "~0.1.2"
     },
     "devDependencies": {
+        "auto-changelog": "~2.4.0",
         "in-publish": "~2.0.1",
         "rimraf": "~3.0.2",
         "safe-publish-latest": "^2.0.0",
@@ -52,5 +55,13 @@
     "author": "Jordan Harband <ljharb@gmail.com>",
     "funding": {
         "url": "https://github.com/sponsors/ljharb"
+    },
+    "auto-changelog": {
+        "output": "CHANGELOG.md",
+        "template": "keepachangelog",
+        "unreleased": false,
+        "commitLimit": false,
+        "backfillLimit": false,
+        "hideCredit": true
     }
 }
