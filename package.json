@@ -22,14 +22,14 @@
         "prepublish": "not-in-publish || npm run prepublishOnly"
     },
     "dependencies": {
-        "@tapjs/tap-finished": "^0.0.2",
+        "@tapjs/tap-finished": "^0.0.3",
         "bouncy": "~3.2.2",
         "browser-launcher": "~1.0.2",
         "browserify": "~3.46.1",
         "concat-stream": "~1.6.2",
         "cross-spawn": "~5.1.0",
         "ecstatic": "~0.4.13",
-        "ent": "~0.0.7",
+        "ent": "^0.0.7",
         "glob": "~3.2.11",
         "jsonify": "~0.0.0",
         "object-inspect": "~1.12.2",
