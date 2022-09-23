@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.7.4](https://github.com/ljharb/testling/compare/v1.7.3...v1.7.4) - 2022-09-22
+
+### Fixed
+
+- [Deps] switch `win-spawn` to `cross-spawn` [`#100`](https://github.com/ljharb/testling/issues/100)
+- [Fix] avoid websocket prelude when `--html` [`#122`](https://github.com/ljharb/testling/issues/122)
+
+### Commits
+
+- [meta] add `auto-changelog` [`11e951e`](https://github.com/ljharb/testling/commit/11e951e5e13bcbf3ab2225015a6b69666605ef7f)
+- [Refactor] elses should be cuddled [`c85152c`](https://github.com/ljharb/testling/commit/c85152c4cd407adde7f6adee34f691e1e5e24ce4)
+- [meta] create FUNDING.yml; add `funding` in package.json [`b407a2f`](https://github.com/ljharb/testling/commit/b407a2fc03cf52a549ae50287ebe5caa1110e6f1)
+- [Dev Deps] update `rimraf`, `safe-publish-latest`, `tape` [`32909bc`](https://github.com/ljharb/testling/commit/32909bceeaee0cec6c6c616cb436413ad82c29da)
+- [Refactor] use `[].concat` for maybe-array [`122d27b`](https://github.com/ljharb/testling/commit/122d27bc0cf20cb5e7612ed8c583549096596643)
+- [Deps] update `concat-stream`, `object-inspect`, `optimist`, `resolve`, `shell-quote` [`12665da`](https://github.com/ljharb/testling/commit/12665da4762594272374f6e09261f2e7d8e86cd3)
+- [Deps] update `@tapjs/tap-finished` [`2d288b5`](https://github.com/ljharb/testling/commit/2d288b513ba8a8a64b8bcd9251d6d6ea183fd857)
+- [Deps] replace `tap-finished` with `@tapjs/finished` [`fc9795b`](https://github.com/ljharb/testling/commit/fc9795b17b35c5d7ada287bd1a614a5a19df604b)
+- [meta] bump engines.node to v0.8, since `through2` has never supported node v0.6 [`7819dac`](https://github.com/ljharb/testling/commit/7819dac701011a2d6c55de5f8a74aa9ff1de6585)
+- [Deps] update `browserify` [`9aee7b2`](https://github.com/ljharb/testling/commit/9aee7b2b2e52ad40197e84d716f1aee66e310dcd)
+- [Deps] update `browser-launcher` [`33436d5`](https://github.com/ljharb/testling/commit/33436d5d3bec0692cdeb3a6ad82f35142ec2a103)
+
 ## [v1.7.3](https://github.com/ljharb/testling/compare/v1.7.2...v1.7.3) - 2020-01-18
 
 ### Commits
