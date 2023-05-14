@@ -36,7 +36,7 @@
         "jsonify": "^0.0.0",
         "object-inspect": "^1.12.3",
         "optimist": "^0.6.1",
-        "resolve": "^1.22.2",
+        "resolve": "^2.0.0-next.4",
         "shallow-copy": "^0.0.1",
         "shell-quote": "^1.8.1",
         "xhr-write-stream": "^0.1.2"
