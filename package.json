@@ -46,7 +46,7 @@
         "in-publish": "^2.0.1",
         "rimraf": "^3.0.2",
         "safe-publish-latest": "^2.0.0",
-        "tape": "^5.6.1"
+        "tape": "^5.6.3"
     },
     "engines": {
         "node": ">=0.8"
