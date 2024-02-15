@@ -34,9 +34,9 @@
         "ent": "^0.0.7",
         "glob": "^3.2.11",
         "jsonify": "^0.0.0",
-        "object-inspect": "^1.12.3",
+        "object-inspect": "^1.13.1",
         "optimist": "^0.6.1",
-        "resolve": "^2.0.0-next.4",
+        "resolve": "^2.0.0-next.5",
         "shallow-copy": "^0.0.1",
         "shell-quote": "^1.8.1",
         "xhr-write-stream": "^0.1.2"
