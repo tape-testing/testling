@@ -17,7 +17,7 @@ function createChannel (writeListen) {
     c.end = function (buf) {
         c.emit('close');
     };
-    
+
     return c;
 }
 
@@ -45,7 +45,7 @@ window.onerror = function (err, url, lineNum) {
         for (var i = 0; i < lines.length; i++) {
             xs.push('      ' + lines[i]);
         }
-        
+
         process.stdout.write([
             '  ---',
             '    stack:',
@@ -54,7 +54,7 @@ window.onerror = function (err, url, lineNum) {
         ].join('\n') + '\n');
     }
     ws.end();
-    
+
     if (typeof oldError === 'function') {
         return oldError.apply(this, arguments);
     }
@@ -82,27 +82,30 @@ var originalLog = console.log;
 console.log = function (msg) {
     var index = 1;
     var args = arguments;
-    
+
     if (typeof msg === 'string') {
         msg = msg.replace(/(^|[^%])%[sd]/g, function (_, s) {
             return s + args[index++];
         });
     }
     else msg = inspect(msg);
-    
+
     for (var i = index; i < args.length; i++) {
         msg += ' ' + inspect(args[i]);
     }
-    
+
     if (params.show === undefined || parseBoolean(params.show)) {
         var elem = document.getElementById('__testling_output');
         if (elem) {
-            var txt = document.createTextNode(msg + '\n');
-            elem.appendChild(txt);
+            var lines = msg.split('\n');
+            for (var i = 0; i < lines.length; ++i) {
+                elem.appendChild(document.createTextNode(lines[i]));
+                elem.appendChild(document.createElement('br'));
+            }
         }
     }
     process.stdout.write(msg + '\n');
-    
+
     if (typeof originalLog === 'function') {
         return originalLog.apply(this, arguments);
     }
