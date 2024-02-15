@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.7.5](https://github.com/ljharb/testling/compare/v1.7.4...v1.7.5) - 2024-02-15
+
+### Commits
+
+- [Deps] update `object-inspect`, `resolve`, `shell-quote` [`eeba066`](https://github.com/ljharb/testling/commit/eeba06600c3be24bc1994ef7f8bb43f78d8280ef)
+- [Fix] render a `&lt;br /&gt;` instead of a newline, for IE &lt; 8 [`e7b99cf`](https://github.com/ljharb/testling/commit/e7b99cff36b9b9d1aae13eb260deef2471cb53c2)
+- [Dev Deps] use `^` [`74b1923`](https://github.com/ljharb/testling/commit/74b19234c3b52bd8820e1a1741b1582dd9a2d979)
+- [Deps] update `object-inspect`, `resolve` [`28ace20`](https://github.com/ljharb/testling/commit/28ace20c07a9a544f806de76177672ce46d54dd0)
+- [Dev Deps] update `tape` [`6b716f2`](https://github.com/ljharb/testling/commit/6b716f27e3044808f1667adf78305b7c158d4973)
+- [Dev Deps] update `tape` [`50ee689`](https://github.com/ljharb/testling/commit/50ee689877dbaa9e7c82d570e7763c1a8c7960fa)
+- [Deps] update `resolve` [`a7ab4ee`](https://github.com/ljharb/testling/commit/a7ab4eef214581fe3bd54444bbde94a25bdc698d)
+- [Dev Deps] update `tape` [`8e2490e`](https://github.com/ljharb/testling/commit/8e2490e995eaffdd841cdb305f2d20671ae58f6f)
+
 ## [v1.7.4](https://github.com/ljharb/testling/compare/v1.7.3...v1.7.4) - 2022-09-22
 
 ### Fixed
