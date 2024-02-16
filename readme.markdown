@@ -139,4 +139,4 @@ npm install -g testling
 
 MIT
 
-![attack of the testlings!](http://substack.net/images/browsers/war_of_the_browsers.png)
+![attack of the testlings!](https://web.archive.org/web/20151126095557if_/http://substack.net/images/browsers/war_of_the_browsers.png)

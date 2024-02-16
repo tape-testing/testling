@@ -4,7 +4,7 @@
     "version": "1.7.5",
     "repository": {
         "type": "git",
-        "url": "git://github.com/substack/testling.git"
+        "url": "git://github.com/tape-testling/testling.git"
     },
     "browserify": "browser.js",
     "bin": {
