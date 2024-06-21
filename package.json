@@ -31,7 +31,7 @@
         "concat-stream": "^1.6.2",
         "cross-spawn": "^5.1.0",
         "ecstatic": "^0.4.13",
-        "ent": "^0.0.7",
+        "ent": "^0.0.8",
         "glob": "^3.2.11",
         "jsonify": "^0.0.0",
         "object-inspect": "^1.13.1",
