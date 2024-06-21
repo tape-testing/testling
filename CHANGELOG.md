@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.7.6](https://github.com/tape-testing/testling/compare/v1.7.5...v1.7.6) - 2024-06-21
+
+### Commits
+
+- [meta] update URLs [`8bff197`](https://github.com/tape-testing/testling/commit/8bff1978a722196f10a09f4ee2ef5177578cf9d4)
+- [Deps] update `ent` [`0ceebda`](https://github.com/tape-testing/testling/commit/0ceebdad8f7066498e1c089f3c9f75b04c017a07)
+- [Dev Deps] update `tape` [`330920d`](https://github.com/tape-testing/testling/commit/330920d39aa0257f307e92c765e1212daea2aebe)
+
 ## [v1.7.5](https://github.com/tape-testing/testling/compare/v1.7.4...v1.7.5) - 2024-02-15
 
 ### Commits
