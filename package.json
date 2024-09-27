@@ -42,11 +42,12 @@
         "xhr-write-stream": "^0.1.2"
     },
     "devDependencies": {
-        "auto-changelog": "^2.4.0",
+        "auto-changelog": "^2.5.0",
+        "encoding": "^0.1.13",
         "in-publish": "^2.0.1",
         "rimraf": "^3.0.2",
         "safe-publish-latest": "^2.0.0",
-        "tape": "^5.8.1"
+        "tape": "^5.9.0"
     },
     "engines": {
         "node": ">=0.8"
