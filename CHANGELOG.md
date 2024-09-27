@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.7.7](https://github.com/tape-testing/testling/compare/v1.7.6...v1.7.7) - 2024-09-26
+
+### Commits
+
+- [Dev Deps] update `auto-changelog`, `tape` [`33eca43`](https://github.com/tape-testing/testling/commit/33eca438379cf16938eb1d6f1b731b1a2ac247f7)
+- [Deps] update `jsonify`, `object-inspect` [`df687fd`](https://github.com/tape-testing/testling/commit/df687fd2be01c886e1c8bfbc16dbe8acef306865)
+- [meta] Fix 404 url in package.json [`e777504`](https://github.com/tape-testing/testling/commit/e7775040f5861f83ee6ff025c62ab440387b527f)
+
 ## [v1.7.6](https://github.com/tape-testing/testling/compare/v1.7.5...v1.7.6) - 2024-06-21
 
 ### Commits

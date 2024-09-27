@@ -1,7 +1,7 @@
 {
     "name": "testling",
     "description": "write tests for browser code",
-    "version": "1.7.6",
+    "version": "1.7.7",
     "repository": {
         "type": "git",
         "url": "git://github.com/tape-testing/testling.git"
